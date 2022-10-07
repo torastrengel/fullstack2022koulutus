@@ -294,6 +294,7 @@ f) tosi
 const montakoKuormaa = () => {
   const kappalemäärä = 50;
   const arr = [];
+  let kuormat = 0;
   const mitat = {
     pituus: 0.3,
     leveys: 0.5,
@@ -301,15 +302,24 @@ const montakoKuormaa = () => {
   };
 
   for (let i = 1; i <= kappalemäärä; i++) {
-    arr.push(2.5 / (mitat.pituus * mitat.leveys * mitat.korkeus));
-    mitat.pituus = mitat.pituus * 0.02;
-    mitat.leveys = mitat.leveys * 0.03;
-    mitat.korkeus = mitat.korkeus * 0.015;
+    arr.push(
+      2.5 * (mitat.pituus * 10 * (mitat.leveys * 10) * (mitat.korkeus * 10))
+    );
+    mitat.pituus = mitat.pituus * 1.02;
+    mitat.leveys = mitat.leveys * 1.03;
+    mitat.korkeus = mitat.korkeus * 1.015;
   }
 
-  const yhteispaino = arr.reduce((acc, curr) => {
+  let yhteispaino = arr.reduce((acc, curr) => {
     return acc + curr;
   }, 0);
 
-  return +yhteispaino;
+  for (let i = yhteispaino; i > 0;) {
+    i -= 10500;
+    kuormat++;
+  }
+
+  return kuormat;
 };
+
+console.log('Kuormien määrä:', montakoKuormaa());
