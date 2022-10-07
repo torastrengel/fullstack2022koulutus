@@ -303,7 +303,7 @@ const montakoKuormaa = () => {
 
   for (let i = 1; i <= kappalemäärä; i++) {
     arr.push(
-      2.5 * (mitat.pituus * 10 * (mitat.leveys * 10) * (mitat.korkeus * 10))
+      2.5 * ((mitat.pituus * 10) * (mitat.leveys * 10) * (mitat.korkeus * 10))
     );
     mitat.pituus = mitat.pituus * 1.02;
     mitat.leveys = mitat.leveys * 1.03;
