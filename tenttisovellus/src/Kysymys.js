@@ -10,7 +10,7 @@ const Kysymys = ({ kysymys, vaihtoehdot }) => {
 
   return (
     <div className="kysymys">
-      <h4>{kysymys}</h4>
+      <h3>{kysymys}</h3>
       {vastausvaihtoehdot}
     </div>
   );
