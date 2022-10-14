@@ -8,8 +8,12 @@ function App() {
   const numerot = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
   const toiminnot = ['+', '-', '/', '*', '='];
 
+  const onOperaattori = (arvo) => {
+    return toiminnot.indexOf(arvo) >= 0;
+  };
+
   const handleClick = (x) => {
-    if (!teksti && toiminnot.indexOf(x) >= 0) {
+    if (!teksti && onOperaattori(x)) {
       alert('Et voi aloittaa laskentaa operaattorilla. Valitse numero!');
       return;
     }
@@ -19,15 +23,14 @@ function App() {
       return;
     }
 
-    if (
-      teksti.length > 0 &&
-      toiminnot.indexOf(x) >= 0 &&
-      teksti.slice(-1) === x
-    ) {
+    if (teksti.length > 0 && onOperaattori(x) && teksti.slice(-1) === x) {
       alert('Ei peräkkäisiä operaattoreita!');
       return;
-    } else if (toiminnot.indexOf(x) >= 0 && isNaN(+teksti.slice(-1))) {
-      setTeksti(teksti.slice(0, -1) + x);
+    }
+
+    if (onOperaattori(x) && teksti.slice(-1)) {
+      const uusiTeksti = teksti.slice(0, -1) + x;
+      setTeksti(uusiTeksti);
     }
 
     setTeksti(teksti + x);
