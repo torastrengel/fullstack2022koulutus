@@ -11,11 +11,23 @@ function App() {
   const handleClick = (x) => {
     if (!teksti && toiminnot.indexOf(x) >= 0) {
       alert('Et voi aloittaa laskentaa operaattorilla. Valitse numero!');
+      return;
     }
 
     if (x === '=') {
       setTeksti(eval(teksti));
       return;
+    }
+
+    if (
+      teksti.length > 0 &&
+      toiminnot.indexOf(x) >= 0 &&
+      teksti.slice(-1) === x
+    ) {
+      alert('Ei peräkkäisiä operaattoreita!');
+      return;
+    } else if (toiminnot.indexOf(x) >= 0 && isNaN(+teksti.slice(-1))) {
+      setTeksti(teksti.slice(0, -1) + x);
     }
 
     setTeksti(teksti + x);
