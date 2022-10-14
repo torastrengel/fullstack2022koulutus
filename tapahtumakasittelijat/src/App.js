@@ -20,7 +20,7 @@ function App() {
     }
 
     if (x === '=') {
-      setTeksti(eval(teksti));
+      setTeksti(JSON.stringify(eval(teksti)));
       return;
     }
 
