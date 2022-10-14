@@ -8,6 +8,7 @@ function App() {
   const numerot = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
   const toiminnot = ['+', '-', '/', '*', '='];
 
+  // Tarkista onko käyttäjän syöttämä luku operaattori
   const onOperaattori = (arvo) => {
     return toiminnot.indexOf(arvo) >= 0;
   };
@@ -23,14 +24,18 @@ function App() {
       return;
     }
 
+    // Ei samaa peräkkäistä operaattoria --> +++ ei onnaa
+
     if (teksti.length > 0 && onOperaattori(x) && teksti.slice(-1) === x) {
       alert('Ei peräkkäisiä operaattoreita!');
       return;
     }
 
-    if (onOperaattori(x) && teksti.slice(-1)) {
-      const uusiTeksti = teksti.slice(0, -1) + x;
-      setTeksti(uusiTeksti);
+    // Estä useiden operaattoreiden lisääminen laskutoimitukseen --> 1 +-/ 4 ++ 2 ei enää toimi
+
+    if (onOperaattori(x) && isNaN(+teksti.slice(-1))) {
+      setTeksti(teksti.slice(0, -1) + x);
+      return;
     }
 
     setTeksti(teksti + x);
