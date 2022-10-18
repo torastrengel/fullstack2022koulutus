@@ -59,6 +59,7 @@ const MainContent = () => {
         {tentteja.map((item, index) => (
           <button
             key={`Nappi ${index}`}
+            value={index}
             onClick={valitseTentti}
             className="tentti-nappi"
           >
