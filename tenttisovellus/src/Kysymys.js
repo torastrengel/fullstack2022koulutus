@@ -1,12 +1,18 @@
-const Kysymys = ({ kysymys, valittuTentti, dispatch, index: tenttiIndex }) => {
-  const vastausvaihtoehdot = kysymys.vaihtoehdot.map((vaihtoehto, index) => {
+const Kysymys = ({
+  kysymys,
+  opiskelijaNakyma,
+  valittuTentti,
+  dispatch,
+  index: tenttiIndex,
+}) => {
+  const vastausvaihtoehdot = kysymys.vaihtoehdot.map((item, index) => {
     return (
-      <label key={index}>
-        <input type="radio" value={vaihtoehto.vastaus} name="kysymys" />{' '}
-        {vaihtoehto.vastaus}
+      <div key={item.id}>
+        <input type="radio" value={item.vastaus} name="kysymys" />{' '}
         <input
+          className="vastaus-input"
           type="text"
-          value={vaihtoehto.vastaus}
+          value={item.vastaus}
           onChange={(event) => {
             dispatch({
               type: 'VASTAUS_MUUTETTIIN',
@@ -33,17 +39,18 @@ const Kysymys = ({ kysymys, valittuTentti, dispatch, index: tenttiIndex }) => {
           }}
           type="checkbox"
           name="onkoOikea"
-          checked={vaihtoehto.onkoOikea}
+          checked={item.onkoOikea}
         />{' '}
         Oikea vastaus?
-      </label>
+      </div>
     );
   });
 
   return (
     <div className="kysymys">
-      <h3>{kysymys.kysymys}</h3>
+      {opiskelijaNakyma && <h3>{kysymys.kysymys}</h3>}
       <input
+        className="kysymys-input"
         type="text"
         onChange={(event) =>
           dispatch({

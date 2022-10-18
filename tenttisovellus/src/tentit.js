@@ -5,26 +5,26 @@ export const tentit = [
       {
         kysymys: 'Suomen pääkaupunki on...',
         vaihtoehdot: [
-          { vastaus: 'Helsinki', onkoOikea: true },
-          { vastaus: 'Turku', onkoOikea: false },
-          { vastaus: 'Jyväskylä', onkoOikea: false },
-          { vastaus: 'Rovaniemi', onkoOikea: false },
+          { id: '12', vastaus: 'Helsinki', onkoOikea: true },
+          { id: '13', vastaus: 'Turku', onkoOikea: false },
+          { id: '14', vastaus: 'Jyväskylä', onkoOikea: false },
+          { id: '15', vastaus: 'Rovaniemi', onkoOikea: false },
         ],
       },
       {
         kysymys: 'Japanin pääkaupunki on...',
         vaihtoehdot: [
-          { vastaus: 'Osaka', onkoOikea: false },
-          { vastaus: 'Hiroshima', onkoOikea: false },
-          { vastaus: 'Kyoto', onkoOikea: false },
-          { vastaus: 'Tokyo', onkoOikea: true },
+          { id: '16', vastaus: 'Osaka', onkoOikea: false },
+          { id: '17', vastaus: 'Hiroshima', onkoOikea: false },
+          { id: '18', vastaus: 'Kyoto', onkoOikea: false },
+          { id: '19', vastaus: 'Tokyo', onkoOikea: true },
         ],
       },
       {
         kysymys: 'Maapallo on litteä. Totta vai tarua?',
         vaihtoehdot: [
-          { vastaus: 'Totta', onkoOikea: false },
-          { vastaus: 'Tarua', onkoOikea: true },
+          { id: '20', vastaus: 'Totta', onkoOikea: false },
+          { id: '21', vastaus: 'Tarua', onkoOikea: true },
         ],
       },
     ],
@@ -35,22 +35,22 @@ export const tentit = [
       {
         kysymys: 'Hauki on kala.',
         vaihtoehdot: [
-          { vastaus: 'Kyllä', onkoOikea: true },
-          { vastaus: 'Ei', onkoOikea: false },
+          { id: '22', vastaus: 'Kyllä', onkoOikea: true },
+          { id: '23', vastaus: 'Ei', onkoOikea: false },
         ],
       },
       {
         kysymys: 'Avaruus on ääretön. Totta vai ei?',
         vaihtoehdot: [
-          { vastaus: 'Kyllä', onkoOikea: true },
-          { vastaus: 'Ei', onkoOikea: false },
+          { id: '24', vastaus: 'Kyllä', onkoOikea: true },
+          { id: '25', vastaus: 'Ei', onkoOikea: false },
         ],
       },
       {
         kysymys: 'Ääni kulkee valoa nopeammin.',
         vaihtoehdot: [
-          { vastaus: 'Kyllä', onkoOikea: false },
-          { vastaus: 'Ei', onkoOikea: true },
+          { id: '26', vastaus: 'Kyllä', onkoOikea: false },
+          { id: '27', vastaus: 'Ei', onkoOikea: true },
         ],
       },
     ],

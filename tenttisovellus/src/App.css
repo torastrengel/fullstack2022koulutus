@@ -1,6 +1,8 @@
 .main-content {
   padding: 1.5rem;
   font-family: roboto;
+  width: 66vw;
+  margin: 0 auto;
 }
 
 .main-content h1 {
@@ -8,6 +10,7 @@
 }
 
 .tentti {
+  padding: 1.5rem;
   background-color: white;
   border: 1px solid black;
 }
@@ -25,6 +28,12 @@
 
 .kysymys h3 {
   margin-bottom: 0.5rem;
+}
+
+.kysymys-input, .vastaus-input {
+  padding: 0.66rem;
+  font-size: 15px;
+  margin-right: 2rem;
 }
 
 .tentti-nappi {

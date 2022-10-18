@@ -17,7 +17,6 @@ const reducer = (state, action) => {
         tenttiIndex: tenttiIndex2,
         uusiOikea,
       } = action.payload;
-      console.log(uusiOikea);
       kopio3[valittuTentti3].tentti[tenttiIndex2].vaihtoehdot[
         index3
       ].onkoOikea = uusiOikea;
@@ -33,6 +32,8 @@ const reducer = (state, action) => {
       kopio2[valittuTentti2].tentti[tenttiIndex].vaihtoehdot[index2].vastaus =
         uusiVastaus;
       return kopio2;
+    case 'LISAA_TENTTI':
+      break;
     default:
       throw new Error(
         'Joko actionia ei ole määritetty tai suoritit jotain uskomatonta'
@@ -43,8 +44,7 @@ const reducer = (state, action) => {
 const MainContent = () => {
   const [tentteja, dispatch] = useReducer(reducer, tentit);
   const [valittuTentti, setValittuTentti] = useState(0);
-
-  console.log('tentteja', tentteja);
+  const [opiskelijaNakyma, setOpiskelijaNakyma] = useState(true);
 
   const valitseTentti = (event) => {
     const { value: tenttinumero } = event.target;
@@ -59,7 +59,6 @@ const MainContent = () => {
         {tentteja.map((item, index) => (
           <button
             key={`Nappi ${index}`}
-            value={index}
             onClick={valitseTentti}
             className="tentti-nappi"
           >
@@ -67,10 +66,12 @@ const MainContent = () => {
           </button>
         ))}
       </div>
+
       <Tentti
         tentteja={tentteja[valittuTentti]}
         valittuTentti={valittuTentti}
         dispatch={dispatch}
+        opiskelijaNakyma={opiskelijaNakyma}
       />
     </div>
   );

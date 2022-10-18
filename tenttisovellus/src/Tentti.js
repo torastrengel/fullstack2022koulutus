@@ -1,7 +1,7 @@
 import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
 
-const Tentti = ({ dispatch, valittuTentti, tentteja }) => {
+const Tentti = ({ dispatch, valittuTentti, opiskelijaNakyma, tentteja }) => {
   const kysymykset = tentteja.tentti.map((item, index) => {
     return (
       <Kysymys
@@ -10,6 +10,7 @@ const Tentti = ({ dispatch, valittuTentti, tentteja }) => {
         kysymys={item}
         index={index}
         dispatch={dispatch}
+        opiskelijaNakyma={opiskelijaNakyma}
       />
     );
   });
