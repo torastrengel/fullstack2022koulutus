@@ -1,21 +1,25 @@
 import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
 
-const Tentti = ({ tenttiData }) => {
-  const kysymykset = tenttiData.tentti1.map((item) => {
+const Tentti = ({ dispatch, valittuTentti, tentteja }) => {
+  const kysymykset = tentteja.tentti.map((item, index) => {
     return (
       <Kysymys
-        id={item.kysymys}
-        kysymys={item.kysymys}
-        vaihtoehdot={item.vaihtoehdot}
+        key={`Kysymys ${index}`}
+        valittuTentti={valittuTentti}
+        kysymys={item}
+        index={index}
+        dispatch={dispatch}
       />
     );
   });
 
-  return <div className="tentti">
-    {kysymykset}
-    <Button color="primary">Tarkista vastaukset</Button>
-    </div>;
+  return (
+    <div className="tentti">
+      {kysymykset}
+      <Button color="primary">Tarkista vastaukset</Button>
+    </div>
+  );
 };
 
 export default Tentti;

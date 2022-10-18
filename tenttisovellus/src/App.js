@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 function App() {
   return (
     <div>
-      <AppBar position="static" color='primary'>
+      <AppBar position="static" color="primary">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Tenttisovellus
