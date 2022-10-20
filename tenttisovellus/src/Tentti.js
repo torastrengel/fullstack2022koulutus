@@ -30,7 +30,13 @@ const Tentti = ({ dispatch, valittuTentti, opiskelijaNakyma, tentteja }) => {
       <Button onClick={muutaLomakkeenTila} color="secondary">
         {lomakeEsilla ? 'Piilota lomake' : 'Uusi kysymys'}
       </Button>
-      {lomakeEsilla && <UusiKysymysForm />}
+      {lomakeEsilla && (
+        <UusiKysymysForm
+          muutaLomakkeenTila={muutaLomakkeenTila}
+          dispatch={dispatch}
+          valittuTentti={valittuTentti}
+        />
+      )}
       <Button color="primary">Tarkista vastaukset</Button>
     </div>
   );

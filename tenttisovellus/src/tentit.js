@@ -1,36 +1,38 @@
 export const tentit = [
   {
     nimi: 'Maantieto',
+    tallennetaanko: false,
     tentti: [
       {
         kysymys: 'Suomen pääkaupunki on...',
         vaihtoehdot: [
-          { id: '12', vastaus: 'Helsinki', onkoOikea: true },
-          { id: '13', vastaus: 'Turku', onkoOikea: false },
-          { id: '14', vastaus: 'Jyväskylä', onkoOikea: false },
-          { id: '15', vastaus: 'Rovaniemi', onkoOikea: false },
+          { id: '1', vastaus: 'Helsinki', onkoOikea: true },
+          { id: '2', vastaus: 'Turku', onkoOikea: false },
+          { id: '3', vastaus: 'Jyväskylä', onkoOikea: false },
+          { id: '4', vastaus: 'Rovaniemi', onkoOikea: false },
         ],
       },
       {
         kysymys: 'Japanin pääkaupunki on...',
         vaihtoehdot: [
-          { id: '16', vastaus: 'Osaka', onkoOikea: false },
-          { id: '17', vastaus: 'Hiroshima', onkoOikea: false },
-          { id: '18', vastaus: 'Kyoto', onkoOikea: false },
-          { id: '19', vastaus: 'Tokyo', onkoOikea: true },
+          { id: '1', vastaus: 'Osaka', onkoOikea: false },
+          { id: '2', vastaus: 'Hiroshima', onkoOikea: false },
+          { id: '3', vastaus: 'Kyoto', onkoOikea: false },
+          { id: '4', vastaus: 'Tokyo', onkoOikea: true },
         ],
       },
       {
         kysymys: 'Maapallo on litteä. Totta vai tarua?',
         vaihtoehdot: [
-          { id: '20', vastaus: 'Totta', onkoOikea: false },
-          { id: '21', vastaus: 'Tarua', onkoOikea: true },
+          { id: '1', vastaus: 'Totta', onkoOikea: false },
+          { id: '2', vastaus: 'Tarua', onkoOikea: true },
         ],
       },
     ],
   },
   {
     nimi: 'Toinen tentti',
+    tallennetaanko: false,
     tentti: [
       {
         kysymys: 'Hauki on kala.',
