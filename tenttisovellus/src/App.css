@@ -43,3 +43,50 @@
   margin: 1rem;
   cursor: pointer;
 }
+
+.lisaa-kysymys-nappi {
+  cursor: pointer;
+  background-color: black;
+  color: white;
+  padding: 1rem;
+  transition: ease-in-out 125ms;
+}
+
+.poistonappi {
+  cursor: pointer;
+  background-color: black;
+  padding: 0.5rem;
+  color: white;
+}
+
+.lisaa-kysymys-kentat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lisaa-kysymys-kentat p {
+  font-weight: bold;
+}
+
+.kentta {
+  padding: 0.4rem;
+  width: 33%;
+}
+
+.lisaa-kysymys-nappi:hover {
+  background-color: #404040;
+}
+
+.uusi-kysymys-form {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 1rem;
+}
+
+.uusi-kysymys-input {
+  padding: 1rem;
+  font-size: 1.3rem;
+}

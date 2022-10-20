@@ -45,26 +45,27 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
     setVaihtoehdot([...vaihtoehdot, uusiKentta]);
   };
 
+  const poistaVaihtoehto = (e, id) => {
+    setVaihtoehdot(vaihtoehdot.filter((item) => item.id !== id));
+  };
+
   const muutaVaihtoehtoKenttaa = (e, id) => {
     const { value, name, type } = e.target;
     const vaihtoehdotKopio = JSON.parse(JSON.stringify(vaihtoehdot));
 
     if (type === 'checkbox') {
-      const muuttuneetArvot = vaihtoehdotKopio.map((item, index) => {
+      const muuttuneetArvot = vaihtoehdotKopio.map((item) => {
         if (item.id === id) {
-          console.log('ID täsmää', item);
           return { ...item, [name]: !item.onkoOikea };
         }
-        console.log('ID ei täsmää', item);
         return { ...item };
       });
       setVaihtoehdot(muuttuneetArvot);
     } else {
-      const muuttuneetArvot = vaihtoehdotKopio.map((item, index) => {
+      const muuttuneetArvot = vaihtoehdotKopio.map((item) => {
         if (item.id === id) {
           return { ...item, [name]: value };
         }
-        console.log('got here');
         return { ...item };
       });
       setVaihtoehdot(muuttuneetArvot);
@@ -72,8 +73,9 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="uusi-kysymys-form" onSubmit={handleSubmit}>
       <input
+        className="uusi-kysymys-input"
         type="text"
         value={kysymys}
         name="kysymys"
@@ -90,6 +92,7 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
             muutaVaihtoehtoKenttaa={muutaVaihtoehtoKenttaa}
             vastaus={item.vastaus}
             onkoOikea={item.onkoOikea}
+            poistaVaihtoehto={poistaVaihtoehto}
           />
           //   {`Vaihtoehto ${index + 1}`}
           //   <input
@@ -108,7 +111,9 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
           // </div>
         );
       })}
-      <span onClick={uusiVaihtoehtoKentta}>Lisää vastausvaihtoehto</span>
+      <span className="lisaa-kysymys-nappi" onClick={uusiVaihtoehtoKentta}>
+        Lisää vastausvaihtoehto
+      </span>
       <Button type="submit">Lisää kysymys nykyiseen tenttiin</Button>
     </form>
   );
