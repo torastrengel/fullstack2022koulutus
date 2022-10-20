@@ -52,7 +52,7 @@ const MainContent = () => {
 
   useEffect(() => {
     const tenttiData = localStorage.getItem('tenttidata');
-    if (!tenttiData) {
+    if (tenttiData == null) {
       console.log('Data tulee muuttujasta');
       localStorage.setItem('tenttidata', JSON.stringify(tentit));
       dispatch({ type: 'ALUSTA_DATA', payload: tentit });
