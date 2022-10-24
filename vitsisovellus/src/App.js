@@ -19,12 +19,6 @@ const reducer = (state, action) => {
     case 'LOPETA_AUTOMAATTISET_VITSIT':
       console.log('Lopetetaan automaattiset vitsit...');
       return { ...state, automaattihaku: false };
-    case 'ASETA_LATAUSAIKA_TIMEOUT':
-      console.log('Simuloitu odotusaika asetettu...');
-      return { ...state, timeoutId: action.payload };
-    case 'POISTA_LATAUSAIKA_TIMEOUT':
-      console.log('Simuloitu odotusaika lopetetaan...');
-      return { ...state, timeoutId: '' };
     case 'VITSI_NOUDETTU':
       console.log('Vitsi noudettu onnistuneesti!');
       return {
@@ -45,7 +39,6 @@ function App() {
     hakuOnnistui: false,
     automaattihaku: false,
     intervalId: '',
-    timeoutId: '',
   });
 
   useEffect(() => {
@@ -57,12 +50,11 @@ function App() {
       }, 10000);
 
       dispatch({ type: 'ASETA_AUTOMAATIN_INTERVAL', payload: intervalId });
-    } else if (vitsiData.automaattihaku && vitsiData.intervalId) {
+    } else if (vitsiData.intervalId) {
       console.log('Automaatio on jo käynnissä!');
     } else {
       clearInterval(vitsiData.intervalId);
       dispatch({ type: 'POISTA_AUTOMAATIN_INTERVAL' });
-      dispatch({ type: 'POISTA_LATAUSAIKA_TIMEOUT' });
     }
   }, [vitsiData.automaattihaku]);
 
@@ -74,10 +66,7 @@ function App() {
           'https://api.chucknorris.io/jokes/random'
         );
 
-        const timeoutId = setTimeout(() => {
-          dispatch({ type: 'VITSI_NOUDETTU', payload: result.data });
-        }, 2000);
-        dispatch({ type: 'ASETA_LATAUSAIKA_TIMEOUT', payload: timeoutId });
+        dispatch({ type: 'VITSI_NOUDETTU', payload: result.data });
 
         /*
         Haetun objektin rakenne - result.data
@@ -105,8 +94,6 @@ function App() {
     dispatch({ type: 'LOPETA_AUTOMAATTISET_VITSIT' });
   };
 
-  let randomIndex = Math.floor(Math.random() * vitsiData.vitsit.length);
-
   return (
     <div className="vitsi-root">
       {vitsiData.haetaanVitsiä && (
@@ -116,10 +103,18 @@ function App() {
       )}
 
       {vitsiData.vitsit.length > 0 && (
-        <h1>{vitsiData.vitsit[randomIndex].value}</h1>
+        <h1>
+          {
+            vitsiData.vitsit[
+              Math.floor(Math.random() * vitsiData.vitsit.length)
+            ].value
+          }
+        </h1>
       )}
 
-      <button onClick={haeVitsi}>Hae vitsiä</button>
+      <button disabled={vitsiData.haetaanVitsiä} onClick={haeVitsi}>
+        Hae vitsiä
+      </button>
       {vitsiData.automaattihaku ? (
         <button onClick={lopetaAutomaattihaku}>
           Lopeta automaattinen haku
