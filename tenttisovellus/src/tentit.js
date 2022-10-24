@@ -2,6 +2,7 @@ export const tentit = [
   {
     nimi: 'Maantieto',
     tallennetaanko: false,
+    dataSaved: false,
     tentti: [
       {
         kysymys: 'Suomen pääkaupunki on...',
@@ -33,6 +34,7 @@ export const tentit = [
   {
     nimi: 'Toinen tentti',
     tallennetaanko: false,
+    dataSaved: false,
     tentti: [
       {
         kysymys: 'Hauki on kala.',

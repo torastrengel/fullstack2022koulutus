@@ -1,5 +1,6 @@
 import { useState, useReducer, useEffect } from 'react';
 import Tentti from './Tentti';
+import SaveAlert from './SaveAlert';
 import { tentit } from './tentit';
 
 const reducer = (state, action) => {
@@ -38,6 +39,9 @@ const reducer = (state, action) => {
       kopio[action.payload.valittuTentti].tallennetaanko =
         action.payload.tallennetaanko;
       return kopio;
+    case 'TALLENNETAAN':
+      kopio[action.payload.valittuTentti].dataSaved = action.payload.dataSaved;
+      return kopio;
     default:
       throw new Error(
         'Joko actionia ei ole määritetty tai suoritit jotain uskomatonta'
@@ -48,7 +52,8 @@ const reducer = (state, action) => {
 const MainContent = () => {
   const [tentteja, dispatch] = useReducer(reducer, tentit);
   const [valittuTentti, setValittuTentti] = useState(0);
-  const [opiskelijaNakyma, setOpiskelijaNakyma] = useState(false);
+  const [opiskelijaNakyma, setOpiskelijaNakyma] = useState(true);
+  const [timerId, setTimerId] = useState('');
 
   useEffect(() => {
     const tenttiData = localStorage.getItem('tenttidata');
@@ -63,18 +68,35 @@ const MainContent = () => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log('Tenttilista muuttui, tallennetaan koko lista uudestaan');
-    if (tentteja[valittuTentti].tallennetaanko) {
-      localStorage.setItem('tenttidata', JSON.stringify(tentteja));
+  //localStorageen ei tallenneta mitään äpin älyyn liittyvää dataa. Puhtaasti vain tenttiin liittyvät datat talteen - EI MUUTA!!!
 
-      dispatch({
-        type: 'PÄIVITÄ_TALLENNUS',
-        payload: {
-          tallennetaanko: false,
-          valittuTentti: valittuTentti,
-        },
-      });
+  useEffect(() => {
+    console.log(tentteja[valittuTentti].tallennetaanko);
+    if (tentteja[valittuTentti].tallennetaanko && !timerId) {
+      console.log('Tenttilista muuttui');
+      if (tentteja[valittuTentti].dataSaved === false) {
+        dispatch({
+          type: 'TALLENNETAAN',
+          payload: { valittuTentti: valittuTentti, dataSaved: true },
+        });
+        const timeoutId = setTimeout(() => {
+          localStorage.setItem('tenttidata', JSON.stringify(tentteja));
+          dispatch({
+            type: 'PÄIVITÄ_TALLENNUS',
+            payload: {
+              tallennetaanko: false,
+              valittuTentti: valittuTentti,
+            },
+          });
+          dispatch({
+            type: 'TALLENNETAAN',
+            payload: { valittuTentti: valittuTentti, dataSaved: false },
+          });
+          setTimerId('');
+          clearTimeout(timeoutId);
+        }, 5000);
+        setTimerId(timeoutId);
+      }
     }
   }, [tentteja[valittuTentti].tallennetaanko]);
 
@@ -83,6 +105,8 @@ const MainContent = () => {
 
     setValittuTentti(tenttinumero);
   };
+
+  //Kun applikaation state tallennetaan, tallennetaanko muuttuja voi olla jo alustavasti true arvossa
 
   return (
     <div className="main-content">
@@ -103,7 +127,7 @@ const MainContent = () => {
           </button>
         ))}
       </div>
-
+      {!timerId && <SaveAlert />}
       <Tentti
         tentteja={tentteja[valittuTentti]}
         valittuTentti={valittuTentti}
