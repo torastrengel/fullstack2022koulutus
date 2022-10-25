@@ -15,15 +15,29 @@ const reducer = (state, action) => {
       return { ...state, intervalId: '' };
     case 'VITSIÄ_NOUDETAAN':
       console.log('Vitsiä noudetaan...');
-      return { ...state, haetaanVitsiä: true };
+      return { ...state, haetaanVitsiä: true, hakuEpäonnistui: false };
+    case 'VITSIN_HAKU_EPÄONNISTUI':
+      console.log('Vitsin haku epäonnistui :/');
+      return { ...state, hakuEpäonnistui: true, haetaanVitsiä: false };
     case 'LOPETA_AUTOMAATTISET_VITSIT':
       console.log('Lopetetaan automaattiset vitsit...');
-      return { ...state, automaattihaku: false };
+      return { ...state, automaattihaku: false, ajastinId: '' };
+    case 'VÄHENNÄ_SEKUNTI_AJASTIMESTA':
+      if (state.ajastin === 1) {
+        return { ...state, ajastin: 10 };
+      } else {
+        return {
+          ...state,
+          ajastin: state.ajastin - 1,
+          ajastinId: action.payload,
+        };
+      }
     case 'VITSI_NOUDETTU':
       console.log('Vitsi noudettu onnistuneesti!');
       return {
         ...state,
         vitsit: [...state.vitsit, action.payload],
+        vitsi: action.payload.value,
         haetaanVitsiä: false,
       };
     default:
@@ -34,11 +48,15 @@ const reducer = (state, action) => {
 function App() {
   const [vitsiData, dispatch] = useReducer(reducer, {
     vitsit: [],
+    nähdytVitsit: [],
+    vitsi: '',
     haetaanVitsiä: false,
     hakuEpäonnistui: false,
     hakuOnnistui: false,
     automaattihaku: false,
     intervalId: '',
+    ajastin: 10,
+    ajastinId: '',
   });
 
   useEffect(() => {
@@ -48,12 +66,19 @@ function App() {
           haeVitsi();
         }
       }, 10000);
+      const ajastinId = setInterval(() => {
+        dispatch({
+          type: 'VÄHENNÄ_SEKUNTI_AJASTIMESTA',
+          payload: ajastinId,
+        });
+      }, 1000);
 
       dispatch({ type: 'ASETA_AUTOMAATIN_INTERVAL', payload: intervalId });
-    } else if (vitsiData.intervalId) {
-      console.log('Automaatio on jo käynnissä!');
-    } else {
+    }
+
+    if (!vitsiData.automaattihaku && vitsiData.intervalId) {
       clearInterval(vitsiData.intervalId);
+      clearInterval(vitsiData.ajastinId);
       dispatch({ type: 'POISTA_AUTOMAATIN_INTERVAL' });
     }
   }, [vitsiData.automaattihaku]);
@@ -83,6 +108,7 @@ function App() {
       }
     } catch (error) {
       console.log('Tapahtui virhe:', error);
+      dispatch({ type: 'VITSIN_HAKU_EPÄONNISTUI' });
     }
   };
 
@@ -96,21 +122,23 @@ function App() {
 
   return (
     <div className="vitsi-root">
+      {vitsiData.automaattihaku && (
+        <span>{`Chuck Norris hakee seuraavan vitsin ${vitsiData.ajastin} sekunnin kuluttua`}</span>
+      )}
       {vitsiData.haetaanVitsiä && (
         <div className="haetaan-notification">
           <h4>Haetaan vitsiä</h4>
         </div>
       )}
 
-      {vitsiData.vitsit.length > 0 && (
-        <h1>
-          {
-            vitsiData.vitsit[
-              Math.floor(Math.random() * vitsiData.vitsit.length)
-            ].value
-          }
-        </h1>
+      {vitsiData.hakuEpäonnistui && (
+        <div className="haetaan-notification">
+          <h4>Vitsin haussa tapahtui virhe. Tee uusi haku alta:</h4>
+          <button onClick={haeVitsi}>Uusi haku</button>
+        </div>
       )}
+
+      {vitsiData.vitsi && <h1 className="vitsi">{vitsiData.vitsi}</h1>}
 
       <button disabled={vitsiData.haetaanVitsiä} onClick={haeVitsi}>
         Hae vitsiä
