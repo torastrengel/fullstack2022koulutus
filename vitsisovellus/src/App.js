@@ -15,7 +15,12 @@ const reducer = (state, action) => {
       return { ...state, intervalId: '' };
     case 'VITSIÄ_NOUDETAAN':
       console.log('Vitsiä noudetaan...');
-      return { ...state, haetaanVitsiä: true, hakuEpäonnistui: false };
+      return {
+        ...state,
+        haetaanVitsiä: true,
+        hakuEpäonnistui: false,
+        tallennus: true,
+      };
     case 'VITSIN_HAKU_EPÄONNISTUI':
       console.log('Vitsin haku epäonnistui :/');
       return { ...state, hakuEpäonnistui: true, haetaanVitsiä: false };
@@ -39,7 +44,11 @@ const reducer = (state, action) => {
         vitsit: [...state.vitsit, action.payload],
         vitsi: action.payload.value,
         haetaanVitsiä: false,
+        tallennus: false,
       };
+    case 'ALUSTA_DATA':
+      console.log(action.type, 'Alustetaan data...');
+      return { ...state, vitsit: [...action.payload] };
     default:
       throw new Error(`Keissiä tyypillä ${action.type} ei tunnistettu`);
   }
@@ -57,8 +66,28 @@ function App() {
     intervalId: '',
     ajastin: 10,
     ajastinId: '',
+    tallennus: false,
   });
 
+  //Haetaan data localStoragesta tai viedään se sinne, mikäli sitä ei jo ole olemassa
+  useEffect(() => {
+    const vitsit = localStorage.getItem('vitsit');
+
+    if (vitsit) {
+      console.log(
+        'Data löytyi localStoragesta! Alustetaan sovellus localStoragen datalla'
+      );
+      dispatch({ type: 'ALUSTA_DATA', payload: JSON.parse(vitsit) });
+    } else {
+      console.log(
+        'Chuck Norris on siivonnut localStoragen. Pistetääs data takaisin!'
+      );
+      localStorage.setItem('vitsit', JSON.stringify(vitsiData.vitsit));
+      dispatch({ type: 'ALUSTA_DATA', payload: vitsiData.vitsit });
+    }
+  }, []);
+
+  // useEffect automaattisen vitsin toteutukseen. Suoritetaan aina, kun automaattihaku boolean muuttuu
   useEffect(() => {
     if (vitsiData.automaattihaku && !vitsiData.intervalId) {
       const intervalId = setInterval(() => {
@@ -82,6 +111,13 @@ function App() {
       dispatch({ type: 'POISTA_AUTOMAATIN_INTERVAL' });
     }
   }, [vitsiData.automaattihaku]);
+
+  useEffect(() => {
+    if (vitsiData.tallennus) {
+      console.log('Chuck Norris kantoi datan localStorageen -->');
+      localStorage.setItem('vitsit', JSON.stringify(vitsiData.vitsit));
+    }
+  }, [vitsiData.tallennus]);
 
   const haeVitsi = async () => {
     try {
