@@ -2,6 +2,7 @@ import './App.css';
 import { useReducer, useEffect } from 'react';
 import axios from 'axios';
 
+// Dispatch keissit
 const reducer = (state, action) => {
   switch (action.type) {
     case 'ALOITA_AUTOMAATTISET_VITSIT':
@@ -55,6 +56,7 @@ const reducer = (state, action) => {
 };
 
 function App() {
+  //Alustava data sekä state
   const [vitsiData, dispatch] = useReducer(reducer, {
     vitsit: [],
     nähdytVitsit: [],
@@ -112,6 +114,7 @@ function App() {
     }
   }, [vitsiData.automaattihaku]);
 
+  //useEffect, jonka vastuulla on tallentaa data aina localStorageen, mikäli vitsit listaan lisätään uusia vitsejä
   useEffect(() => {
     if (vitsiData.tallennus) {
       console.log('Chuck Norris kantoi datan localStorageen -->');
