@@ -13,7 +13,12 @@ const reducer = (state, action) => {
       return { ...state, intervalId: action.payload };
     case 'POISTA_AUTOMAATIN_INTERVAL':
       console.log('Dispatch: Poista intervalId');
-      return { ...state, intervalId: '' };
+      clearInterval(action.payload);
+      return { ...state, intervalId: null };
+    case 'POISTA_AJASTIN_INTERVAL':
+      console.log('Dispatch: Poista ajastinId');
+      clearInterval(action.payload);
+      return { ...state, ajastinId: null, ajastin: 10 };
     case 'VITSIÄ_NOUDETAAN':
       console.log('Vitsiä noudetaan...');
       return {
@@ -27,7 +32,7 @@ const reducer = (state, action) => {
       return { ...state, hakuEpäonnistui: true, haetaanVitsiä: false };
     case 'LOPETA_AUTOMAATTISET_VITSIT':
       console.log('Lopetetaan automaattiset vitsit...');
-      return { ...state, automaattihaku: false, ajastinId: '' };
+      return { ...state, automaattihaku: false };
     case 'VÄHENNÄ_SEKUNTI_AJASTIMESTA':
       if (state.ajastin === 1) {
         return { ...state, ajastin: 10 };
@@ -35,7 +40,6 @@ const reducer = (state, action) => {
         return {
           ...state,
           ajastin: state.ajastin - 1,
-          ajastinId: action.payload,
         };
       }
     case 'VITSI_NOUDETTU':
@@ -46,6 +50,12 @@ const reducer = (state, action) => {
         vitsi: action.payload.value,
         haetaanVitsiä: false,
         tallennus: false,
+      };
+    case 'ASETA_AJASTIN_INTERVAL':
+      console.log('Aseta ajastinId');
+      return {
+        ...state,
+        ajastinId: action.payload,
       };
     case 'ALUSTA_DATA':
       console.log(action.type, 'Alustetaan data...');
@@ -65,11 +75,13 @@ function App() {
     hakuEpäonnistui: false,
     hakuOnnistui: false,
     automaattihaku: false,
-    intervalId: '',
+    intervalId: null,
     ajastin: 10,
-    ajastinId: '',
+    ajastinId: null,
     tallennus: false,
   });
+
+  console.log(vitsiData.ajastinId);
 
   //Haetaan data localStoragesta tai viedään se sinne, mikäli sitä ei jo ole olemassa
   useEffect(() => {
@@ -91,7 +103,7 @@ function App() {
 
   // useEffect automaattisen vitsin toteutukseen. Suoritetaan aina, kun automaattihaku boolean muuttuu
   useEffect(() => {
-    if (vitsiData.automaattihaku && !vitsiData.intervalId) {
+    if (vitsiData.automaattihaku) {
       const intervalId = setInterval(() => {
         if (!vitsiData.haetaanVitsiä) {
           haeVitsi();
@@ -100,17 +112,20 @@ function App() {
       const ajastinId = setInterval(() => {
         dispatch({
           type: 'VÄHENNÄ_SEKUNTI_AJASTIMESTA',
-          payload: ajastinId,
         });
       }, 1000);
 
+      dispatch({ type: 'ASETA_AJASTIN_INTERVAL', payload: ajastinId });
       dispatch({ type: 'ASETA_AUTOMAATIN_INTERVAL', payload: intervalId });
-    }
-
-    if (!vitsiData.automaattihaku && vitsiData.intervalId) {
-      clearInterval(vitsiData.intervalId);
-      clearInterval(vitsiData.ajastinId);
-      dispatch({ type: 'POISTA_AUTOMAATIN_INTERVAL' });
+    } else {
+      dispatch({
+        type: 'POISTA_AUTOMAATIN_INTERVAL',
+        payload: vitsiData.intervalId,
+      });
+      dispatch({
+        type: 'POISTA_AJASTIN_INTERVAL',
+        payload: vitsiData.ajastinId,
+      });
     }
   }, [vitsiData.automaattihaku]);
 
