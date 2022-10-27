@@ -2,6 +2,7 @@ import { useState, useReducer, useEffect } from 'react';
 import Tentti from './Tentti';
 import SaveAlert from './SaveAlert';
 import { tentit } from './tentit';
+import axios from 'axios';
 
 const reducer = (state, action) => {
   const kopio = JSON.parse(JSON.stringify(state));
@@ -12,6 +13,7 @@ const reducer = (state, action) => {
         kysymys;
       kopio[action.payload.valittuTentti].tallennetaanko = true;
       return kopio;
+
     case 'OIKEELLISUUS_MUUTETTIIN':
       const { uusiOikea } = action.payload;
       kopio[action.payload.valittuTentti].tentti[
@@ -19,6 +21,7 @@ const reducer = (state, action) => {
       ].vaihtoehdot[action.payload.index].onkoOikea = uusiOikea;
       kopio[action.payload.valittuTentti].tallennetaanko = true;
       return kopio;
+
     case 'VASTAUS_MUUTETTIIN':
       const { uusiVastaus } = action.payload;
       kopio[action.payload.valittuTentti].tentti[
@@ -26,6 +29,7 @@ const reducer = (state, action) => {
       ].vaihtoehdot[action.payload.index].vastaus = uusiVastaus;
       kopio[action.payload.valittuTentti].tallennetaanko = true;
       return kopio;
+
     case 'KYSYMYS_LISÄTTIIN':
       kopio[action.payload.valittuTentti].tallennetaanko = true;
       kopio[action.payload.valittuTentti].tentti.push({
@@ -35,13 +39,12 @@ const reducer = (state, action) => {
       return kopio;
     case 'ALUSTA_DATA':
       return action.payload;
+
     case 'PÄIVITÄ_TALLENNUS':
       kopio[action.payload.valittuTentti].tallennetaanko =
         action.payload.tallennetaanko;
       return kopio;
-    case 'TALLENNETAAN':
-      kopio[action.payload.valittuTentti].dataSaved = action.payload.dataSaved;
-      return kopio;
+
     default:
       throw new Error(
         'Joko actionia ei ole määritetty tai suoritit jotain uskomatonta'
@@ -53,50 +56,40 @@ const MainContent = () => {
   const [tentteja, dispatch] = useReducer(reducer, tentit);
   const [valittuTentti, setValittuTentti] = useState(0);
   const [opiskelijaNakyma, setOpiskelijaNakyma] = useState(true);
-  const [timerId, setTimerId] = useState('');
 
   useEffect(() => {
-    const tenttiData = localStorage.getItem('tenttidata');
-    if (tenttiData == null) {
-      console.log('Data tulee muuttujasta');
-      localStorage.setItem('tenttidata', JSON.stringify(tentit));
-      dispatch({ type: 'ALUSTA_DATA', payload: tentit });
-    } else {
-      console.log('Kappas! localStoragessahan oli muutakin kun valoa...');
-
-      dispatch({ type: 'ALUSTA_DATA', payload: JSON.parse(tenttiData) });
-    }
+    const haeData = async () => {
+      try {
+        const result = await axios.get('http://localhost:3001');
+        console.log('Axios fetch: http://localhost:3001', result.data);
+        dispatch({ type: 'ALUSTA_DATA', payload: result.data });
+      } catch (error) {
+        console.error('Virhe tapahtui:', error);
+      }
+    };
+    haeData();
   }, []);
 
   //localStorageen ei tallenneta mitään äpin älyyn liittyvää dataa. Puhtaasti vain tenttiin liittyvät datat talteen - EI MUUTA!!!
 
   useEffect(() => {
-    console.log(tentteja[valittuTentti].tallennetaanko);
-    if (tentteja[valittuTentti].tallennetaanko && !timerId) {
-      console.log('Tenttilista muuttui');
-      if (tentteja[valittuTentti].dataSaved === false) {
-        dispatch({
-          type: 'TALLENNETAAN',
-          payload: { valittuTentti: valittuTentti, dataSaved: true },
-        });
-        const timeoutId = setTimeout(() => {
-          localStorage.setItem('tenttidata', JSON.stringify(tentteja));
-          dispatch({
-            type: 'PÄIVITÄ_TALLENNUS',
-            payload: {
-              tallennetaanko: false,
-              valittuTentti: valittuTentti,
-            },
-          });
-          dispatch({
-            type: 'TALLENNETAAN',
-            payload: { valittuTentti: valittuTentti, dataSaved: false },
-          });
-          setTimerId('');
-          clearTimeout(timeoutId);
-        }, 5000);
-        setTimerId(timeoutId);
+    const tallennaDataServulle = async () => {
+      try {
+        await axios.post('http://localhost:3001', tentteja);
+      } catch (error) {
+        console.error('Virhe tallennuksessa:', error);
       }
+      dispatch({
+        type: 'PÄIVITÄ_TALLENNUS',
+        payload: {
+          tallennetaanko: false,
+          valittuTentti: valittuTentti,
+        },
+      });
+    };
+    if (tentteja[valittuTentti].tallennetaanko) {
+      console.log('Tenttilista tallennetaan');
+      tallennaDataServulle();
     }
   }, [tentteja[valittuTentti].tallennetaanko]);
 
@@ -127,7 +120,6 @@ const MainContent = () => {
           </button>
         ))}
       </div>
-      {!timerId && <SaveAlert />}
       <Tentti
         tentteja={tentteja[valittuTentti]}
         valittuTentti={valittuTentti}
