@@ -37,6 +37,7 @@ const reducer = (state, action) => {
         vaihtoehdot: action.payload.vastausvaihtoehdot,
       });
       return kopio;
+
     case 'ALUSTA_DATA':
       return action.payload;
 
