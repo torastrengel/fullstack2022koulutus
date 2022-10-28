@@ -7,7 +7,7 @@ const VaihtoehtoKentta = ({
   poistaVaihtoehto,
 }) => {
   return (
-    <div className="lisaa-kysymys-kentat" key={index}>
+    <div className="lisaa-kysymys-kentat">
       <p>{`Vaihtoehto ${index + 1}`}</p>
       <input
         className="lisaa-kysymys kentta"
