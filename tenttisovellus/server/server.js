@@ -16,14 +16,17 @@ app.get('/', (req, res) => {
     encoding: 'utf-8',
     flag: 'r',
   });
-  console.log(data);
   res.json(JSON.parse(data));
 });
 
 app.post('/', (req, res) => {
-  const newData = JSON.stringify(req.body);
-  fs.writeFileSync(path.join(__dirname, './tenttidata.json'), newData);
-  res.send('Data tallennettu onnistuneesti!');
+  if (req.body.length > 0) {
+    const newData = JSON.stringify(req.body);
+    fs.writeFileSync(path.join(__dirname, './tenttidata.json'), newData);
+    res.send('Data tallennettu onnistuneesti!');
+  } else {
+    res.send('Pyynnössä ei lähetetty dataa. Mitään ei tehty...');
+  }
 });
 
 app.listen(port, () => console.log(`Server started on port: ${port}`));
