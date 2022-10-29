@@ -16,11 +16,11 @@ app.get('/', (req, res) => {
     encoding: 'utf-8',
     flag: 'r',
   });
-  res.json(JSON.parse(data));
+  res.send(JSON.parse(data));
 });
 
 app.post('/', (req, res) => {
-  if (req.body.length > 0) {
+  if (req.body && Object.keys(req.body).length > 0) {
     const newData = JSON.stringify(req.body);
     fs.writeFileSync(path.join(__dirname, './tenttidata.json'), newData);
     res.send('Data tallennettu onnistuneesti!');
