@@ -1,49 +1,70 @@
 import { useState, useReducer, useEffect } from 'react';
 import Tentti from './Tentti';
 import SaveAlert from './SaveAlert';
-import { tentit } from './tentit';
+import { tenttiData } from './tentit';
 import axios from 'axios';
 
 const reducer = (state, action) => {
   const kopio = JSON.parse(JSON.stringify(state));
   switch (action.type) {
-    case 'KYSYMYS_MUUTETTIIN':
-      const { kysymys } = action.payload;
-      kopio[action.payload.valittuTentti].tentti[action.payload.index].kysymys =
-        kysymys;
-      kopio[action.payload.valittuTentti].tallennetaanko = true;
+    case 'KYSYMYS_MUUTETTIIN': {
+      const {
+        kysymys: uusiKysymys,
+        valittuTentti,
+        index: kysymysIndex,
+      } = action.payload;
+      kopio.tentit[valittuTentti].kysymykset[kysymysIndex].kysymys =
+        uusiKysymys;
+      kopio.dataSaved = true;
       return kopio;
+    }
 
-    case 'OIKEELLISUUS_MUUTETTIIN':
-      const { uusiOikea } = action.payload;
-      kopio[action.payload.valittuTentti].tentti[
-        action.payload.tenttiIndex
-      ].vaihtoehdot[action.payload.index].onkoOikea = uusiOikea;
-      kopio[action.payload.valittuTentti].tallennetaanko = true;
+    case 'OIKEELLISUUS_MUUTETTIIN': {
+      const {
+        uusiOikea,
+        valittuTentti,
+        tenttiIndex,
+        index: vaihtoehtoIndex,
+      } = action.payload;
+      kopio.tentit[valittuTentti].kysymykset[tenttiIndex].vaihtoehdot[
+        vaihtoehtoIndex
+      ].onkoOikea = uusiOikea;
+      kopio.dataSaved = true;
       return kopio;
+    }
 
-    case 'VASTAUS_MUUTETTIIN':
-      const { uusiVastaus } = action.payload;
-      kopio[action.payload.valittuTentti].tentti[
-        action.payload.tenttiIndex
-      ].vaihtoehdot[action.payload.index].vastaus = uusiVastaus;
-      kopio[action.payload.valittuTentti].tallennetaanko = true;
+    case 'VASTAUS_MUUTETTIIN': {
+      const {
+        uusiVastaus,
+        valittuTentti,
+        tenttiIndex,
+        index: vaihtoehtoIndex,
+      } = action.payload;
+      kopio.tentit[valittuTentti].kysymykset[tenttiIndex].vaihtoehdot[
+        vaihtoehtoIndex
+      ].vastaus = uusiVastaus;
+      kopio.dataSaved = true;
       return kopio;
+    }
 
-    case 'KYSYMYS_LISÄTTIIN':
-      kopio[action.payload.valittuTentti].tallennetaanko = true;
-      kopio[action.payload.valittuTentti].tentti.push({
-        kysymys: action.payload.kysymys,
-        vaihtoehdot: action.payload.vastausvaihtoehdot,
-      });
+    case 'KYSYMYS_LISÄTTIIN': {
+      const { valittuTentti, kysymys, vastausvaihtoehdot } = action.payload;
+      const newQuestion = { kysymys: kysymys, vaihtoehdot: vastausvaihtoehdot };
+      kopio.tentit[valittuTentti].kysymykset.push(newQuestion);
+      // kopio.tentit[valittuTentti].kysymykset = [
+      //   ...kopio.tentit[valittuTentti].kysymykset,
+      //   newQuestion,
+      // ];
+      kopio.dataSaved = true;
       return kopio;
+    }
 
     case 'ALUSTA_DATA':
-      return action.payload;
+      console.log('Data alustetaan...');
+      return { ...action.payload, dataInitialized: true };
 
     case 'PÄIVITÄ_TALLENNUS':
-      kopio[action.payload.valittuTentti].tallennetaanko =
-        action.payload.tallennetaanko;
+      kopio.dataSaved = action.payload.dataSaved;
       return kopio;
 
     default:
@@ -54,7 +75,7 @@ const reducer = (state, action) => {
 };
 
 const MainContent = () => {
-  const [tentteja, dispatch] = useReducer(reducer, tentit);
+  const [tentteja, dispatch] = useReducer(reducer, { dataInitialized: false });
   const [valittuTentti, setValittuTentti] = useState(0);
   const [opiskelijaNakyma, setOpiskelijaNakyma] = useState(true);
 
@@ -83,16 +104,16 @@ const MainContent = () => {
       dispatch({
         type: 'PÄIVITÄ_TALLENNUS',
         payload: {
-          tallennetaanko: false,
-          valittuTentti: valittuTentti,
+          dataSaved: false,
+          valittuTentti,
         },
       });
     };
-    if (tentteja[valittuTentti].tallennetaanko) {
+    if (tentteja.dataSaved) {
       console.log('Tenttilista tallennetaan');
       tallennaDataServulle();
     }
-  }, [tentteja[valittuTentti].tallennetaanko]);
+  }, [tentteja.dataSaved]);
 
   const valitseTentti = (event) => {
     const { value: tenttinumero } = event.target;
@@ -103,31 +124,35 @@ const MainContent = () => {
   //Kun applikaation state tallennetaan, tallennetaanko muuttuja voi olla jo alustavasti true arvossa
 
   return (
-    <div className="main-content">
-      <h1>{`Tentin nimi: ${
-        tentteja[valittuTentti].nimi
-          ? tentteja[valittuTentti].nimi
-          : 'Nimeämätön tentti'
-      }`}</h1>
-      <div>
-        {tentteja.map((item, index) => (
-          <button
-            key={`Nappi ${index}`}
-            value={index}
-            onClick={valitseTentti}
-            className="tentti-nappi"
-          >
-            {item.nimi || `Tentti numero ${index + 1}`}
-          </button>
-        ))}
-      </div>
-      <Tentti
-        tentteja={tentteja[valittuTentti]}
-        valittuTentti={valittuTentti}
-        dispatch={dispatch}
-        opiskelijaNakyma={opiskelijaNakyma}
-      />
-    </div>
+    <>
+      {tentteja.dataInitialized ? (
+        <div className="main-content">
+          <h1>{`Tentin nimi: ${
+            tentteja.tentit[valittuTentti].nimi
+              ? tentteja.tentit[valittuTentti].nimi
+              : 'Nimeämätön tentti'
+          }`}</h1>
+          <div>
+            {tentteja.tentit.map((item, index) => (
+              <button
+                key={`Nappi ${index}`}
+                value={index}
+                onClick={valitseTentti}
+                className="tentti-nappi"
+              >
+                {item.nimi || `Tentti numero ${index + 1}`}
+              </button>
+            ))}
+          </div>
+          <Tentti
+            tentit={tentteja.tentit[valittuTentti]}
+            valittuTentti={valittuTentti}
+            dispatch={dispatch}
+            opiskelijaNakyma={opiskelijaNakyma}
+          />
+        </div>
+      ) : <h1>Loading data...</h1>}
+    </>
   );
 };
 

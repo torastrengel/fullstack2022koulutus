@@ -84,7 +84,6 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
       />
       {vaihtoehdot.map((item, index) => {
         return (
-          // <div key={index}>
           <VaihtoehtoKentta
             key={index}
             index={index}
@@ -94,21 +93,6 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
             onkoOikea={item.onkoOikea}
             poistaVaihtoehto={poistaVaihtoehto}
           />
-          //   {`Vaihtoehto ${index + 1}`}
-          //   <input
-          //     type="text"
-          //     placeholder="vaihtoehto"
-          //     name={`vastaus_${index + 1}`}
-          //     value={item.vastaus}
-          //     onChange={muutaVaihtoehtoKenttaa}
-          //   />
-          //   <input
-          //     type="checkbox"
-          //     name="onkoOikea"
-          //     checked={item.onkoOikea}
-          //     onChange={muutaVaihtoehtoKenttaa}
-          //   />
-          // </div>
         );
       })}
       <span className="lisaa-kysymys-nappi" onClick={uusiVaihtoehtoKentta}>
