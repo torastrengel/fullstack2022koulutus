@@ -1,7 +1,6 @@
 import { useState, useReducer, useEffect } from 'react';
 import Tentti from './Tentti';
 import SaveAlert from './SaveAlert';
-import { tenttiData } from './tentit';
 import axios from 'axios';
 
 const reducer = (state, action) => {
@@ -40,6 +39,7 @@ const reducer = (state, action) => {
         tenttiIndex,
         index: vaihtoehtoIndex,
       } = action.payload;
+
       kopio.tentit[valittuTentti].kysymykset[tenttiIndex].vaihtoehdot[
         vaihtoehtoIndex
       ].vastaus = uusiVastaus;
@@ -50,18 +50,15 @@ const reducer = (state, action) => {
     case 'KYSYMYS_LISÄTTIIN': {
       const { valittuTentti, kysymys, vastausvaihtoehdot } = action.payload;
       const newQuestion = { kysymys: kysymys, vaihtoehdot: vastausvaihtoehdot };
+
       kopio.tentit[valittuTentti].kysymykset.push(newQuestion);
-      // kopio.tentit[valittuTentti].kysymykset = [
-      //   ...kopio.tentit[valittuTentti].kysymykset,
-      //   newQuestion,
-      // ];
       kopio.dataSaved = true;
       return kopio;
     }
 
     case 'ALUSTA_DATA':
       console.log('Data alustetaan...');
-      return { ...action.payload, dataInitialized: true };
+      return { tentit: action.payload, dataInitialized: true };
 
     case 'PÄIVITÄ_TALLENNUS':
       kopio.dataSaved = action.payload.dataSaved;
@@ -97,7 +94,10 @@ const MainContent = () => {
   useEffect(() => {
     const tallennaDataServulle = async () => {
       try {
-        await axios.post('http://localhost:3001', tentteja);
+        await axios.post(
+          'http://localhost:3001',
+          tentteja.tentit[valittuTentti]
+        );
       } catch (error) {
         console.error('Virhe tallennuksessa:', error);
       }
@@ -123,6 +123,7 @@ const MainContent = () => {
 
   //Kun applikaation state tallennetaan, tallennetaanko muuttuja voi olla jo alustavasti true arvossa
 
+  console.log('State', tentteja);
   return (
     <>
       {tentteja.dataInitialized ? (
@@ -151,7 +152,9 @@ const MainContent = () => {
             opiskelijaNakyma={opiskelijaNakyma}
           />
         </div>
-      ) : <h1>Loading data...</h1>}
+      ) : (
+        <h1>Loading data...</h1>
+      )}
     </>
   );
 };
