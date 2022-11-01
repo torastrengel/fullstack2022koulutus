@@ -65,9 +65,10 @@ const haeTenttiNimellä = async (nimi) => {
 // Hae monia tenttejä ID:illä
 const haeTentitId = async (id) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM tentit WHERE id = ANY ($1)', [
-      id,
-    ]);
+    const { rows } = await pool.query(
+      'SELECT * FROM tentit WHERE id = ANY ($1)',
+      [id]
+    );
     if (rows.length === 0) {
       throw new Error('Annetuilla ID:illä ei löytynyt dataa...');
     }
@@ -99,7 +100,63 @@ const päivitäTentinNimi = async (id, uusiNimi) => {
   }
 };
 
-päivitäTentinNimi(1019, 'Sekalainen tentti')
+// päivitäTentinNimi(1019, 'Sekalainen tentti')
+
+// Palauttaa ne tentit, jotka eivät ole voimassa
+const haeVoimassaolevatTentit = async () => {
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM tentit WHERE voimassa = false'
+    );
+    console.log(rows);
+    pool.end();
+  } catch (error) {
+    console.error('Virhe tapahtui:', error);
+    pool.end();
+  }
+};
+
+// haeVoimassaolevatTentit();
+
+// Hakee tentit, jotka ovat päivätty ennen 12.10.2022
+const haePäivämäärällä = async () => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT * FROM tentit WHERE date < '12.10.2022'"
+    );
+    console.log(rows);
+    pool.end();
+  } catch (error) {
+    console.error('Virhe tapahtui:', error);
+    pool.end();
+  }
+};
+
+// haePäivämäärällä();
+
+// Lisää uusi tentti
+const lisääTentti = async (tenttiNimi, kyssärit) => {
+  try {
+    const uudetKysymykset = JSON.stringify(kyssärit);
+    const now = Date.now();
+    const { rows } = await pool.query(
+      'INSERT INTO tentit(nimi, kysymykset, date) VALUES ($1, $2, $3)',
+      [tenttiNimi, uudetKysymykset, '01.11.2022']
+    );
+    console.log(rows);
+    pool.end();
+  } catch (error) {
+    console.error('Virhe tapahtui:', error);
+    pool.end();
+  }
+};
+
+lisääTentti('Historian tentti', [
+  {
+    kysymys: 'Mikä on historiaa',
+    vaihtoehdot: [{ id: 1, vastaus: 'En tiedä', onkoOikea: true }],
+  },
+]);
 
 //Tallenna dataa tietokantaan --> TUPLA HIPSUT!!! Muuten ei toimi.
 // Tämä ei toimi --> 'INSERT INTO tentit (nimi) VALUES ("jotain randomia")'
