@@ -40,14 +40,12 @@ router.delete('/:id', async (req, res) => {
 });
 
 router.patch('/:id', async (req, res) => {
-  const uusiNimi = 'Matti Meikäläinen';
-  const uusiEmail = 'testi@testi.testi';
-  const uusiAdmin = true;
+  const { nimi, email, isAdmin } = req.body;
 
   try {
     const text =
       'UPDATE kayttaja SET nimi = ($1), email = ($2), admin = ($3) WHERE id = ($4)';
-    const values = [uusiNimi, uusiEmail, uusiAdmin, req.params.id];
+    const values = [nimi, email, isAdmin, req.params.id];
     await db.query(text, values);
     res
       .status(200)
