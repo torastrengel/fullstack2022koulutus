@@ -16,12 +16,12 @@ const haeKaikkiTentit = async () => {
       'SELECT * FROM tentit ORDER BY id ASC',
       (err, res) => {
         console.log(res.rows);
-        pool.end();
       }
     );
   } catch (error) {
     console.error('Virhe tapahtui:', error);
   }
+  pool.end();
 };
 // haeKaikkiTentit();
 
@@ -34,11 +34,10 @@ const haeTenttiId = async (id) => {
       throw new Error('Annetulla ID:llä ei löytynyt dataa...');
     }
     console.log(rows);
-    pool.end();
   } catch (error) {
     console.error('Virhe tapahtui:', error);
-    pool.end();
   }
+  pool.end();
 };
 // haeTenttiId('1018');
 
@@ -53,11 +52,10 @@ const haeTenttiNimellä = async (nimi) => {
       throw new Error('Annetulla nimellä ei löytynyt dataa...');
     }
     console.log(rows);
-    pool.end();
   } catch (error) {
     console.error('Virhe tapahtui:', error);
-    pool.end();
   }
+  pool.end();
 };
 
 // haeTenttiNimellä('Maantieto');
@@ -73,11 +71,10 @@ const haeTentitId = async (id) => {
       throw new Error('Annetuilla ID:illä ei löytynyt dataa...');
     }
     console.log(rows);
-    pool.end();
   } catch (error) {
     console.error('Virhe tapahtui:', error);
-    pool.end();
   }
+  pool.end();
 };
 
 // haeTentitId([1018, 1019])
@@ -93,11 +90,10 @@ const päivitäTentinNimi = async (id, uusiNimi) => {
       throw new Error('Annetulla nimellä ei löytynyt dataa...');
     }
     console.log(rows);
-    pool.end();
   } catch (error) {
     console.error('Virhe tapahtui:', error);
-    pool.end();
   }
+  pool.end();
 };
 
 // päivitäTentinNimi(1019, 'Sekalainen tentti')
@@ -109,11 +105,11 @@ const haeVoimassaolevatTentit = async () => {
       'SELECT * FROM tentit WHERE voimassa = false'
     );
     console.log(rows);
-    pool.end();
   } catch (error) {
     console.error('Virhe tapahtui:', error);
-    pool.end();
   }
+  console.log('pool end');
+  pool.end();
 };
 
 // haeVoimassaolevatTentit();
@@ -125,11 +121,10 @@ const haePäivämäärällä = async () => {
       "SELECT * FROM tentit WHERE date < '12.10.2022'"
     );
     console.log(rows);
-    pool.end();
   } catch (error) {
     console.error('Virhe tapahtui:', error);
-    pool.end();
   }
+  pool.end();
 };
 
 // haePäivämäärällä();
@@ -144,19 +139,18 @@ const lisääTentti = async (tenttiNimi, kyssärit) => {
       [tenttiNimi, uudetKysymykset, '01.11.2022']
     );
     console.log(rows);
-    pool.end();
   } catch (error) {
     console.error('Virhe tapahtui:', error);
-    pool.end();
   }
+  pool.end();
 };
 
-lisääTentti('Historian tentti', [
-  {
-    kysymys: 'Mikä on historiaa',
-    vaihtoehdot: [{ id: 1, vastaus: 'En tiedä', onkoOikea: true }],
-  },
-]);
+// lisääTentti('Historian tentti', [
+//   {
+//     kysymys: 'Mikä on historiaa',
+//     vaihtoehdot: [{ id: 1, vastaus: 'En tiedä', onkoOikea: true }],
+//   },
+// ]);
 
 //Tallenna dataa tietokantaan --> TUPLA HIPSUT!!! Muuten ei toimi.
 // Tämä ei toimi --> 'INSERT INTO tentit (nimi) VALUES ("jotain randomia")'

@@ -14,7 +14,7 @@ app.use(morgan('tiny'));
 
 app.get('/', async (req, res) => {
   try {
-    const { rows } = await db.query('SELECT * FROM tentit ORDER BY id ASC');
+    const { rows } = await db.query('SELECT * FROM tentti ORDER BY id ASC');
     res.send(rows);
   } catch (error) {
     console.error('Virhe datan haussa:', error);
@@ -25,7 +25,7 @@ app.post('/', async (req, res) => {
   const { id, kysymykset: uudetKysymykset } = req.body;
 
   if (req.body && Object.keys(req.body).length > 0) {
-    await db.query('UPDATE tentit SET kysymykset = ($1) WHERE id = ($2)', [
+    await db.query('UPDATE tentti SET kysymykset = ($1) WHERE id = ($2)', [
       JSON.stringify(uudetKysymykset),
       id,
     ]);
