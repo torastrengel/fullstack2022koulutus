@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+// Hae kaikki tentit
 router.get('/', async (req, res) => {
   try {
     const text = 'SELECT * FROM tentti ORDER BY id ASC';
@@ -13,6 +14,7 @@ router.get('/', async (req, res) => {
   // db.end();
 });
 
+// Lisää uusi tentti
 router.post('/', async (req, res) => {
   try {
     const values = [
@@ -31,6 +33,7 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Poista tentti ID:n avulla
 router.delete('/:id', async (req, res) => {
   try {
     const text = 'DELETE FROM tentti WHERE id = ($1)';
@@ -43,6 +46,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Muokkaa tenttiä ID:n avulla
 router.patch('/:id', async (req, res) => {
   try {
     const uusiTenttiNimi = 'Turhanpäiväinen tentti';

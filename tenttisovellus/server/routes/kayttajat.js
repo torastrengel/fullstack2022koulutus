@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+// Hae kaikki käyttäjät
 router.get('/', async (req, res) => {
   try {
     const text = 'SELECT * FROM kayttaja ORDER BY id ASC';
@@ -12,6 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Lisää uusi käyttäjä
 router.post('/', async (req, res) => {
   try {
     const values = ['Erkki Erkkinen', 'erkki@erkkikoodaa.codes', false];
@@ -24,6 +26,7 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Poista käyttäjä ID:n avulla
 router.delete('/:id', async (req, res) => {
   try {
     const text = 'DELETE FROM kayttaja WHERE id = ($1)';
@@ -39,6 +42,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Muokkaa käyttäjän tietoja ID:n avulla
 router.patch('/:id', async (req, res) => {
   const { nimi, email, isAdmin } = req.body;
 
