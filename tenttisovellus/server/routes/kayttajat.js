@@ -16,7 +16,8 @@ router.get('/', async (req, res) => {
 // Lisää uusi käyttäjä
 router.post('/', async (req, res) => {
   try {
-    const values = ['Erkki Erkkinen', 'erkki@erkkikoodaa.codes', false];
+    const { nimi, email, isAdmin } = req.body;
+    const values = [nimi, email, isAdmin];
     const text =
       'INSERT INTO kayttaja (nimi, email, admin) VALUES ($1, $2, $3)';
     await db.query(text, values);

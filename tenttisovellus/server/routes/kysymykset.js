@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Lisää uusi kysymys
+// Lisää uusi kysymys ja liitä se olemassa olevaan tenttiin
 router.post('/', async (req, res) => {
   const { kysymys, tentti_id, pisteet } = req.body;
   const client = await db.connect();
