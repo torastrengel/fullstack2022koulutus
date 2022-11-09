@@ -10,26 +10,23 @@ router.get('/', async (req, res) => {
     res.send(rows);
   } catch (error) {
     console.error('Tenttidatan haussa ongelma:', error);
+    console.error('Tenttidatan haussa ongelma');
   }
-  // db.end();
 });
 
 // Lisää uusi tentti
 router.post('/', async (req, res) => {
   try {
-    const values = [
-      'Maantieto',
-      'Maantiedon tentti, jossa erotellaan jyvät kanoista vai mitenkä se meni',
-      false,
-      '04.11.2022',
-      50,
-    ];
+    const { nimi, kuvaus, voimassaolo, pvm, max_pisteet } = req.body;
+    const values = [nimi, kuvaus, voimassaolo, pvm, max_pisteet];
     const text =
       'INSERT INTO tentti (nimi, kuvaus, voimassaolo, pvm, max_pisteet) VALUES ($1, $2, $3, $4, $5)';
+
     await db.query(text, values);
-    res.status(200).send('Tentti lisätty onnistuneesti! ✅')
+    res.status(200).send('Tentti lisätty onnistuneesti! ✅');
   } catch (error) {
-    res.status(500).send('Tentin tallennuksessa ilmeni virhe:', error);
+    console.error('Virhe tentin tallennuksessa:', error);
+    res.status(500).send('Tentin tallennuksessa ilmeni virhe:');
   }
 });
 
@@ -42,18 +39,21 @@ router.delete('/:id', async (req, res) => {
       .status(200)
       .send(`Tentti ID:llä ${req.params.id} poistettiin onnistuneesti ✅`);
   } catch (error) {
-    res.status(500).send('Tentin poistossa ilmeni virhe:', error);
+    console.error('Tentin poistossa ilmeni virhe:', error);
+    res.status(500).send('Tentin poistossa ilmeni virhe');
   }
 });
 
 // Muokkaa tenttiä ID:n avulla
 router.patch('/:id', async (req, res) => {
   try {
-    const uusiTenttiNimi = 'Turhanpäiväinen tentti';
-    const uusiTentinKuvaus = 'Bla bla bla';
-    const uusiVoimassaolo = true;
-    const uusiPvm = '07.11.2022';
-    const uudetPisteet = 100;
+    const {
+      uusiTenttiNimi,
+      uusiTentinKuvaus,
+      uusiVoimassaolo,
+      uusiPvm,
+      uudetPisteet,
+    } = req.body;
 
     const text =
       'UPDATE tentti SET nimi = ($1), kuvaus = ($2), voimassaolo = ($3), pvm = ($4), max_pisteet = ($5) WHERE id = ($6)';
@@ -69,7 +69,8 @@ router.patch('/:id', async (req, res) => {
       .status(200)
       .send(`Tentti ID:llä ${req.params.id} päivitettiin onnistuneesti ✅`);
   } catch (error) {
-    res.status(500).send('Tentin päivityksessä ilmeni virhe:', error);
+    console.error('Tentin päivitys epäonnistui:', error);
+    res.status(500).send('Tentin päivityksessä ilmeni virhe');
   }
 });
 

@@ -11,7 +11,6 @@ router.get('/', async (req, res) => {
   } catch (error) {
     res.status(500).send('Tenttivastausten haussa ilmeni ongelma ❌');
   }
-  // db.end();
 });
 
 // Lisää uusi vastaus
@@ -28,7 +27,6 @@ router.post('/', async (req, res) => {
     console.error('Virhe:', error);
     res.status(500).send('Tenttivastauksen tallentamisessa ilmeni ongelma ❌');
   }
-  // db.end();
 });
 
 // Poista vastaus ID:n avulla

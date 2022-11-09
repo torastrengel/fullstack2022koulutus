@@ -11,21 +11,33 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Tenttikysymysten haussa ilmeni ongelma:', error);
   }
-  // db.end();
 });
 
 // Lisää uusi kysymys
 router.post('/', async (req, res) => {
-  const { kysymys } = req.body;
+  const { kysymys, tentti_id, pisteet } = req.body;
+  const client = await db.connect();
 
   try {
-    const text = 'INSERT INTO kysymys (kysymys) VALUES ($1)';
-    await db.query(text, kysymys);
-    res.status(200).send('Tenttikysymys tallennettu onnistuneesti ✅');
+    await client.query('BEGIN');
+    const kysymysQuery =
+      'INSERT INTO kysymys (kysymys) VALUES ($1) RETURNING id';
+    const result = await client.query(kysymysQuery, [kysymys]);
+    const insertQuestionToExam =
+      'INSERT INTO tentti_kysymys_liitos(tentti_id, kysymys_id, pisteet) VALUES ($1, $2, $3)';
+    const insertQuestionToExamValues = [tentti_id, result.rows[0].id, pisteet];
+    await client.query(insertQuestionToExam, insertQuestionToExamValues);
+    await client.query('COMMIT');
+    res
+      .status(200)
+      .send(`Kysymys luotu ja yhdistetty tenttiin ID:llä ${tentti_id} ✅`);
   } catch (error) {
-    res.status(500).send('Tenttikysymyksen tallentamisessa ilmeni ongelma');
+    await client.query('ROLLBACK');
+    console.error('Virhe kysymyksen luomisessa:', error);
+    res.status(500).send('Virhe kysymyksen luonnissa');
+  } finally {
+    client.release();
   }
-  // db.end();
 });
 
 // Poista kysymys ID:n avulla
