@@ -10,7 +10,18 @@ router.get('/', async (req, res) => {
     res.send(rows);
   } catch (error) {
     console.error('Tenttidatan haussa ongelma:', error);
-    console.error('Tenttidatan haussa ongelma');
+  }
+});
+
+// Hae yksi tentti ID:n avulla, joka sisältää kysymykset ja vastaukset
+router.get('/:tenttiId', async (req, res) => {
+  try {
+    const text =
+      'SELECT tentti.id, tentti.nimi FROM tentti INNER JOIN tentti_kysymys_liitos ON tentti_kysymys_liitos.tentti_id=tentti.id WHERE tentti_kysymys_liitos.tentti_id = ($1)';
+    const { rows } = await db.query(text, [req.params.tenttiId]);
+    res.send(rows);
+  } catch (error) {
+    console.error('Virhe hakiessa tenttiä liitostaulusta:', error);
   }
 });
 
@@ -18,7 +29,6 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { nimi, kuvaus, voimassaolo, pvm, max_pisteet } = req.body;
-    console.log(req.body);
     const values = [nimi, kuvaus, voimassaolo, pvm, max_pisteet];
     const text =
       'INSERT INTO tentti (nimi, kuvaus, voimassaolo, pvm, max_pisteet) VALUES ($1, $2, $3, $4, $5)';

@@ -1,4 +1,4 @@
-import { useState, useReducer, useEffect } from 'react';
+import { useReducer, useEffect } from 'react';
 import Tentti from './Tentti';
 import SaveAlert from './SaveAlert';
 import axios from 'axios';
@@ -73,17 +73,15 @@ const reducer = (state, action) => {
 
 const MainContent = () => {
   const [tentteja, dispatch] = useReducer(reducer, { dataInitialized: false });
-  const [valittuTentti, setValittuTentti] = useState(0);
-  const [opiskelijaNakyma, setOpiskelijaNakyma] = useState(true);
 
   useEffect(() => {
     const haeData = async () => {
       try {
-        const result = await axios.get('http://localhost:3001');
-        console.log('Axios fetch: http://localhost:3001', result.data);
+        const result = await axios.get('http://localhost:3001/tentit');
+        console.log('Axios fetch: http://localhost:3001/tentit', result.data);
         dispatch({ type: 'ALUSTA_DATA', payload: result.data });
       } catch (error) {
-        console.error('Virhe tapahtui:', error);
+        console.error('Virhe datan alustamisessa:', error);
       }
     };
     haeData();
@@ -94,10 +92,7 @@ const MainContent = () => {
   useEffect(() => {
     const tallennaDataServulle = async () => {
       try {
-        await axios.post(
-          'http://localhost:3001',
-          tentteja.tentit[valittuTentti]
-        );
+        await axios.post('http://localhost:3001');
       } catch (error) {
         console.error('Virhe tallennuksessa:', error);
       }
@@ -105,7 +100,6 @@ const MainContent = () => {
         type: 'PÄIVITÄ_TALLENNUS',
         payload: {
           dataSaved: false,
-          valittuTentti,
         },
       });
     };
@@ -115,18 +109,35 @@ const MainContent = () => {
     }
   }, [tentteja.dataSaved]);
 
-  const valitseTentti = (event) => {
-    const { value: tenttinumero } = event.target;
-
-    setValittuTentti(tenttinumero);
-  };
-
   //Kun applikaation state tallennetaan, tallennetaanko muuttuja voi olla jo alustavasti true arvossa
 
-  console.log('State', tentteja);
+  const vaihdatentti = async (event) => {
+    const { value: tenttiId } = event.target;
+
+    try {
+      const result = axios.get(`http://localhost:3001/${tenttiId}`);
+    } catch (error) {
+      console.error('Virhe tentin vaihtamisessa:', error);
+    }
+  };
+
+  // Tentin vaihtonapit
+  const vaihtonapit = tentteja.tentit?.map((item, index) => (
+    <button
+      key={index}
+      className="tentti-nappi"
+      onClick={vaihdatentti}
+      value={item.id}
+    >
+      {item.nimi}
+    </button>
+  ));
+
   return (
     <>
-      {tentteja.dataInitialized ? (
+      <h1>Testing</h1>
+      {vaihtonapit}
+      {/* {tentteja.dataInitialized ? (
         <div className="main-content">
           <h1>{`Tentin nimi: ${
             tentteja.tentit[valittuTentti].nimi
@@ -154,7 +165,7 @@ const MainContent = () => {
         </div>
       ) : (
         <h1>Loading data...</h1>
-      )}
+      )} */}
     </>
   );
 };
