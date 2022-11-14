@@ -13,13 +13,33 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Hae yksi tentti ID:n avulla, joka sisältää kysymykset ja vastaukset
+// Hae yksi tentti ID:n avulla, joka sisältää kysymykset ja vastausvaihtoehdot
 router.get('/:tenttiId', async (req, res) => {
   try {
-    const text =
-      'SELECT tentti.id, tentti.nimi FROM tentti INNER JOIN tentti_kysymys_liitos ON tentti_kysymys_liitos.tentti_id=tentti.id WHERE tentti_kysymys_liitos.tentti_id = ($1)';
-    const { rows } = await db.query(text, [req.params.tenttiId]);
-    res.send(rows);
+    const tentti_query = 'SELECT * FROM tentti WHERE id = ($1)';
+    const { rows: tentti_data } = await db.query(tentti_query, [
+      req.params.tenttiId,
+    ]);
+
+    const kysymys_query =
+      'SELECT * FROM kysymys WHERE id IN (SELECT kysymys_id FROM tentti_kysymys_liitos WHERE tentti_id = ($1))';
+    const { rows: kysymys_data } = await db.query(kysymys_query, [
+      req.params.tenttiId,
+    ]);
+
+    const vastaus_query =
+      'SELECT * FROM vastaus WHERE kysymys_id IN (SELECT kysymys_id FROM tentti_kysymys_liitos WHERE tentti_id = ($1))';
+    const { rows: vastaus_data } = await db.query(vastaus_query, [
+      req.params.tenttiId,
+    ]);
+
+    const tenttiObjekti = {
+      tentti: { ...tentti_data[0] },
+      kysymykset: [...kysymys_data],
+      vastaukset: [...vastaus_data],
+    };
+
+    res.send(tenttiObjekti);
   } catch (error) {
     console.error('Virhe hakiessa tenttiä liitostaulusta:', error);
   }

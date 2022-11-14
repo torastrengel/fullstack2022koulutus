@@ -4,22 +4,20 @@ import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
 import UusiKysymysForm from './UusiKysymysForm';
 
-const Tentti = ({ dispatch, valittuTentti, opiskelijaNakyma, tentit }) => {
+const Tentti = ({ dispatch, tentti }) => {
   const [lomakeEsilla, setLomakeEsilla] = useState(false);
 
   const muutaLomakkeenTila = () => {
     setLomakeEsilla(!lomakeEsilla);
   };
 
-  const kysymykset = tentit.kysymykset.map((item, index) => {
+  const kysymykset = tentti.kysymykset?.map((item, index) => {
     return (
       <Kysymys
-        key={`Kysymys ${index}`}
-        valittuTentti={valittuTentti}
+        key={item.id}
         kysymys={item}
-        index={index}
         dispatch={dispatch}
-        opiskelijaNakyma={opiskelijaNakyma}
+        vastaukset={tentti.vastaukset}
       />
     );
   });
@@ -34,7 +32,6 @@ const Tentti = ({ dispatch, valittuTentti, opiskelijaNakyma, tentit }) => {
         <UusiKysymysForm
           muutaLomakkeenTila={muutaLomakkeenTila}
           dispatch={dispatch}
-          valittuTentti={valittuTentti}
         />
       )}
       <Button color="primary">Tarkista vastaukset</Button>

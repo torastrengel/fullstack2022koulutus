@@ -19,32 +19,29 @@ const reducer = (state, action) => {
     }
 
     case 'OIKEELLISUUS_MUUTETTIIN': {
-      const {
-        uusiOikea,
-        valittuTentti,
-        tenttiIndex,
-        index: vaihtoehtoIndex,
-      } = action.payload;
-      kopio.tentit[valittuTentti].kysymykset[tenttiIndex].vaihtoehdot[
-        vaihtoehtoIndex
-      ].onkoOikea = uusiOikea;
-      kopio.dataSaved = true;
-      return kopio;
+      const { uusiOikea, vastausId } = action.payload;
+      const uudetVastaukset = kopio.vastaukset.map((item) => {
+        if (item.id === vastausId) {
+          return { ...item, oikein: uusiOikea };
+        } else {
+          return item;
+        }
+      });
+
+      return { ...kopio, vastaukset: uudetVastaukset };
     }
 
     case 'VASTAUS_MUUTETTIIN': {
-      const {
-        uusiVastaus,
-        valittuTentti,
-        tenttiIndex,
-        index: vaihtoehtoIndex,
-      } = action.payload;
+      const { uusiVastaus, vastausId } = action.payload;
+      const uudetVastaukset = kopio.vastaukset.map((item) => {
+        if (item.id === vastausId) {
+          return { ...item, teksti: uusiVastaus };
+        } else {
+          return item;
+        }
+      });
 
-      kopio.tentit[valittuTentti].kysymykset[tenttiIndex].vaihtoehdot[
-        vaihtoehtoIndex
-      ].vastaus = uusiVastaus;
-      kopio.dataSaved = true;
-      return kopio;
+      return { ...kopio, vastaukset: uudetVastaukset };
     }
 
     case 'KYSYMYS_LISÄTTIIN': {
@@ -59,6 +56,10 @@ const reducer = (state, action) => {
     case 'ALUSTA_DATA':
       console.log('Data alustetaan...');
       return { tentit: action.payload, dataInitialized: true };
+
+    case 'VAIHDA_TENTTI':
+      console.log('Tentti vaihdettu');
+      return { ...action.payload, dataInitialized: true };
 
     case 'PÄIVITÄ_TALLENNUS':
       kopio.dataSaved = action.payload.dataSaved;
@@ -115,7 +116,13 @@ const MainContent = () => {
     const { value: tenttiId } = event.target;
 
     try {
-      const result = axios.get(`http://localhost:3001/${tenttiId}`);
+      const result = await axios.get(
+        `http://localhost:3001/tentit/${tenttiId}`
+      );
+      dispatch({
+        type: 'VAIHDA_TENTTI',
+        payload: result.data,
+      });
     } catch (error) {
       console.error('Virhe tentin vaihtamisessa:', error);
     }
@@ -135,37 +142,15 @@ const MainContent = () => {
 
   return (
     <>
-      <h1>Testing</h1>
       {vaihtonapit}
-      {/* {tentteja.dataInitialized ? (
+      {tentteja.dataInitialized ? (
         <div className="main-content">
-          <h1>{`Tentin nimi: ${
-            tentteja.tentit[valittuTentti].nimi
-              ? tentteja.tentit[valittuTentti].nimi
-              : 'Nimeämätön tentti'
-          }`}</h1>
-          <div>
-            {tentteja.tentit.map((item, index) => (
-              <button
-                key={`Nappi ${index}`}
-                value={index}
-                onClick={valitseTentti}
-                className="tentti-nappi"
-              >
-                {item.nimi || `Tentti numero ${index + 1}`}
-              </button>
-            ))}
-          </div>
-          <Tentti
-            tentit={tentteja.tentit[valittuTentti]}
-            valittuTentti={valittuTentti}
-            dispatch={dispatch}
-            opiskelijaNakyma={opiskelijaNakyma}
-          />
+          <h1>{`Tentin nimi: ${tentteja.tentti?.nimi}`}</h1>
+          <Tentti tentti={tentteja} dispatch={dispatch} />
         </div>
       ) : (
         <h1>Loading data...</h1>
-      )} */}
+      )}
     </>
   );
 };
