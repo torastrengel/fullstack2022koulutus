@@ -28,10 +28,8 @@ router.get('/:tenttiId', async (req, res) => {
     ]);
 
     const vastaus_query =
-      'SELECT * FROM vastaus WHERE kysymys_id IN (SELECT kysymys_id FROM tentti_kysymys_liitos WHERE tentti_id = ($1))';
-    const { rows: vastaus_data } = await db.query(vastaus_query, [
-      req.params.tenttiId,
-    ]);
+      'SELECT * FROM vastaus WHERE kysymys_id IN (SELECT kysymys_id FROM tentti_kysymys_liitos WHERE kysymys_id = (kysymys_id))';
+    const { rows: vastaus_data } = await db.query(vastaus_query);
 
     const tenttiObjekti = {
       tentti: { ...tentti_data[0] },

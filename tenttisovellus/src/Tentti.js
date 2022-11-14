@@ -30,6 +30,7 @@ const Tentti = ({ dispatch, tentti }) => {
       </Button>
       {lomakeEsilla && (
         <UusiKysymysForm
+          tenttiId={tentti.tentti.id}
           muutaLomakkeenTila={muutaLomakkeenTila}
           dispatch={dispatch}
         />

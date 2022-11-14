@@ -45,12 +45,9 @@ const reducer = (state, action) => {
     }
 
     case 'KYSYMYS_LISÄTTIIN': {
-      const { valittuTentti, kysymys, vastausvaihtoehdot } = action.payload;
-      const newQuestion = { kysymys: kysymys, vaihtoehdot: vastausvaihtoehdot };
+      const { kysymys, tenttiId, pisteet } = action.payload;
 
-      kopio.tentit[valittuTentti].kysymykset.push(newQuestion);
-      kopio.dataSaved = true;
-      return kopio;
+      break;
     }
 
     case 'ALUSTA_DATA':

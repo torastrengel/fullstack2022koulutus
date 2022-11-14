@@ -1,5 +1,9 @@
 const Kysymys = ({ kysymys, dispatch, vastaukset }) => {
-  const vastausvaihtoehdot = vastaukset.map((item, index) => {
+  const kyssarit = vastaukset.filter((item) => {
+    return kysymys.id === item.kysymys_id;
+  });
+
+  const vastausvaihtoehdot = kyssarit.map((item, index) => {
     return (
       <div key={item.id}>
         <input type="radio" value={item.vastaus} name="kysymys" />{' '}
