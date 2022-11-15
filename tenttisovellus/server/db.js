@@ -1,12 +1,15 @@
 const { Pool } = require('pg');
+require('dotenv').config();
 
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'tenttisovellus',
-  password: 'admin',
-  port: 5432,
+  database: process.env.REACT_APP_DB,
+  password: process.env.REACT_APP_DB_PASSWORD,
+  port: process.env.REACT_APP_DB_PORT,
 });
+
+console.log(process.env.REACT_APP_DB_PASSWORD);
 
 module.exports = {
   query: (text, params) => pool.query(text, params),

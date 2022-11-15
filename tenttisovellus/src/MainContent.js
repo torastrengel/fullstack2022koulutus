@@ -7,15 +7,16 @@ const reducer = (state, action) => {
   const kopio = JSON.parse(JSON.stringify(state));
   switch (action.type) {
     case 'KYSYMYS_MUUTETTIIN': {
-      const {
-        kysymys: uusiKysymys,
-        valittuTentti,
-        index: kysymysIndex,
-      } = action.payload;
-      kopio.tentit[valittuTentti].kysymykset[kysymysIndex].kysymys =
-        uusiKysymys;
-      kopio.dataSaved = true;
-      return kopio;
+      const { kysymys: uusiKysymys, kysymysId } = action.payload;
+      const uudetKysymykset = kopio.kysymykset.map((item) => {
+        if (item.id === kysymysId) {
+          return { ...item, kysymys: uusiKysymys };
+        } else {
+          return item;
+        }
+      });
+
+      return { ...kopio, kysymykset: uudetKysymykset };
     }
 
     case 'OIKEELLISUUS_MUUTETTIIN': {
@@ -45,9 +46,7 @@ const reducer = (state, action) => {
     }
 
     case 'KYSYMYS_LISÄTTIIN': {
-      const { kysymys, tenttiId, pisteet } = action.payload;
-
-      break;
+      return { ...action.payload, dataInitialized: true };
     }
 
     case 'ALUSTA_DATA':

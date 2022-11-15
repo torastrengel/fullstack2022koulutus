@@ -1,9 +1,11 @@
 import { Button } from '@mui/material';
 import { useState } from 'react';
 import VaihtoehtoKentta from './VaihtoehtoKentta';
+import axios from 'axios';
 
-const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
+const UusiKysymysForm = ({ dispatch, muutaLomakkeenTila, tenttiId }) => {
   const [kysymys, setKysymys] = useState('');
+  const [pisteet, setPisteet] = useState(0);
   const [vaihtoehdot, setVaihtoehdot] = useState([]);
 
   const muutaKysymys = (e) => {
@@ -12,7 +14,13 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
     setKysymys(value);
   };
 
-  const handleSubmit = (e) => {
+  const muutaPisteet = (e) => {
+    const { value } = e.target;
+
+    setPisteet(+value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!kysymys || vaihtoehdot.length === 0) {
@@ -22,14 +30,33 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
       return;
     }
 
-    dispatch({
-      type: 'KYSYMYS_LISÄTTIIN',
-      payload: {
+    try {
+      await axios.post('http://localhost:3001/kysymykset', {
         kysymys: kysymys,
-        vastausvaihtoehdot: vaihtoehdot,
-        valittuTentti: valittuTentti,
-      },
-    });
+        pisteet: pisteet,
+        tentti_id: tenttiId,
+      });
+    } catch (error) {
+      console.error('Virhe lähettäessä kysymystä DB:hen', error);
+    } finally {
+      const result = await axios.get(
+        `http://localhost:3001/tentit/${tenttiId}`
+      );
+      dispatch({
+        type: 'KYSYMYS_LISÄTTIIN',
+        payload: result.data,
+      });
+    }
+
+    // dispatch({
+    //   type: 'KYSYMYS_LISÄTTIIN',
+    //   payload: {
+    //     kysymys: kysymys,
+    //     vastausvaihtoehdot: vaihtoehdot,
+    //     tenttiId: tenttiId,
+    //     pisteet: pisteet,
+    //   },
+    // });
     setVaihtoehdot([]);
     setKysymys('');
     (() => muutaLomakkeenTila())();
@@ -38,8 +65,8 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
   const uusiVaihtoehtoKentta = (e) => {
     const uusiKentta = {
       id: vaihtoehdot.length + 1,
-      vastaus: '',
-      onkoOikea: false,
+      teksti: '',
+      oikein: false,
     };
 
     setVaihtoehdot([...vaihtoehdot, uusiKentta]);
@@ -81,6 +108,13 @@ const UusiKysymysForm = ({ dispatch, valittuTentti, muutaLomakkeenTila }) => {
         name="kysymys"
         onChange={muutaKysymys}
         placeholder="Kysymys tähän"
+      />
+      <input
+        type="number"
+        name="pisteet"
+        value={pisteet}
+        onChange={muutaPisteet}
+        placeholder="Kysymyksen pistemäärä"
       />
       {vaihtoehdot.map((item, index) => {
         return (

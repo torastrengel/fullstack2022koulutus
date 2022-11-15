@@ -51,6 +51,7 @@ const Kysymys = ({ kysymys, dispatch, vastaukset }) => {
             type: 'KYSYMYS_MUUTETTIIN',
             payload: {
               kysymys: event.target.value,
+              kysymysId: kysymys.id,
             },
           })
         }
