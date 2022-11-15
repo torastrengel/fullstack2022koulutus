@@ -3,6 +3,7 @@ import Tentti from './Tentti';
 import SaveAlert from './SaveAlert';
 import axios from 'axios';
 
+// Tästä alkaa reducer keissit
 const reducer = (state, action) => {
   const kopio = JSON.parse(JSON.stringify(state));
   switch (action.type) {
