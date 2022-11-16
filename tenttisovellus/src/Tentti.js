@@ -17,7 +17,7 @@ const Tentti = ({ dispatch, tentti }) => {
         key={item.id}
         kysymys={item}
         dispatch={dispatch}
-        vastaukset={tentti.vastaukset}
+        vastaukset={item.vastausvaihtoehdot}
       />
     );
   });

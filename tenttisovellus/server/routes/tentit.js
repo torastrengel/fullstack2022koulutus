@@ -4,11 +4,11 @@ const router = express.Router();
 const db = require('../db');
 
 // Hae kaikki tentit
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const text = 'SELECT * FROM tentti ORDER BY id ASC';
     const { rows } = await db.query(text);
-    res.send(rows);
+    res.status(200).send(rows);
   } catch (error) {
     console.error('Tenttidatan haussa ongelma:', error);
   }
@@ -34,11 +34,21 @@ router.get('/:tenttiId', async (req, res) => {
       req.params.tenttiId,
     ]);
 
+    const kysymykset = kysymys_data.map((kysymys) => {
+      return {
+        id: kysymys.id,
+        kysymys: kysymys.kysymys,
+        vastausvaihtoehdot: vastaus_data.filter(
+          (vastaus) => vastaus.kysymys_id === kysymys.id
+        ),
+      };
+    });
+
+    console.log(kysymykset);
     // Kirjoita logiikka tähän, jotta vastaukset yhdistetään kysymyksiin. käytä Reactin Kysymys.js filter logiikkaa tähän
     const tenttiObjekti = {
       tentti: { ...tentti_data[0] },
-      kysymykset: [...kysymys_data],
-      vastaukset: [...vastaus_data],
+      kysymykset,
     };
 
     res.send(tenttiObjekti);

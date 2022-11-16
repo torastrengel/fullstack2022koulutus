@@ -52,7 +52,7 @@ const reducer = (state, action) => {
 
     case 'ALUSTA_DATA':
       console.log('Data alustetaan...');
-      return { tentit: action.payload };
+      return action.payload;
 
     case 'VAIHDA_TENTTI':
       console.log('Tentti vaihdettu');
@@ -126,7 +126,7 @@ const MainContent = () => {
   };
 
   // Tentin vaihtonapit
-  const vaihtonapit = tentteja.tentit?.map((item, index) => (
+  const vaihtonapit = tentteja.length > 0 && tentteja.map((item, index) => (
     <button
       key={index}
       className="tentti-nappi"
