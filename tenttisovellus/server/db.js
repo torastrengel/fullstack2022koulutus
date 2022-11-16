@@ -9,8 +9,6 @@ const pool = new Pool({
   port: process.env.REACT_APP_DB_PORT,
 });
 
-console.log(process.env.REACT_APP_DB_PASSWORD);
-
 module.exports = {
   query: (text, params) => pool.query(text, params),
   end: () => pool.end(),

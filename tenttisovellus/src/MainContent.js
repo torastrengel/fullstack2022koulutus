@@ -47,16 +47,16 @@ const reducer = (state, action) => {
     }
 
     case 'KYSYMYS_LISÄTTIIN': {
-      return { ...action.payload, dataInitialized: true };
+      return { ...action.payload };
     }
 
     case 'ALUSTA_DATA':
       console.log('Data alustetaan...');
-      return { tentit: action.payload, dataInitialized: true };
+      return { tentit: action.payload };
 
     case 'VAIHDA_TENTTI':
       console.log('Tentti vaihdettu');
-      return { ...action.payload, dataInitialized: true };
+      return { ...action.payload };
 
     case 'PÄIVITÄ_TALLENNUS':
       kopio.dataSaved = action.payload.dataSaved;
@@ -70,7 +70,7 @@ const reducer = (state, action) => {
 };
 
 const MainContent = () => {
-  const [tentteja, dispatch] = useReducer(reducer, { dataInitialized: false });
+  const [tentteja, dispatch] = useReducer(reducer, {});
 
   useEffect(() => {
     const haeData = async () => {
@@ -140,7 +140,7 @@ const MainContent = () => {
   return (
     <>
       {vaihtonapit}
-      {tentteja.dataInitialized ? (
+      {tentteja ? (
         <div className="main-content">
           <h1>{`Tentin nimi: ${tentteja.tentti?.nimi}`}</h1>
           <Tentti tentti={tentteja} dispatch={dispatch} />

@@ -1,9 +1,10 @@
+const { verifyToken } = require('../middlewares/verifyToken');
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
 // Hae kaikki tentit
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
     const text = 'SELECT * FROM tentti ORDER BY id ASC';
     const { rows } = await db.query(text);
@@ -28,9 +29,12 @@ router.get('/:tenttiId', async (req, res) => {
     ]);
 
     const vastaus_query =
-      'SELECT * FROM vastaus WHERE kysymys_id IN (SELECT kysymys_id FROM tentti_kysymys_liitos WHERE kysymys_id = (kysymys_id))';
-    const { rows: vastaus_data } = await db.query(vastaus_query);
+      'SELECT * FROM vastaus WHERE kysymys_id IN (SELECT kysymys_id FROM tentti_kysymys_liitos WHERE tentti_id = ($1))';
+    const { rows: vastaus_data } = await db.query(vastaus_query, [
+      req.params.tenttiId,
+    ]);
 
+    // Kirjoita logiikka tähän, jotta vastaukset yhdistetään kysymyksiin. käytä Reactin Kysymys.js filter logiikkaa tähän
     const tenttiObjekti = {
       tentti: { ...tentti_data[0] },
       kysymykset: [...kysymys_data],
@@ -44,7 +48,7 @@ router.get('/:tenttiId', async (req, res) => {
 });
 
 // Lisää uusi tentti
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   try {
     const { nimi, kuvaus, voimassaolo, pvm, max_pisteet } = req.body;
     const values = [nimi, kuvaus, voimassaolo, pvm, max_pisteet];

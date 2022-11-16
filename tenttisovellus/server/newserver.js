@@ -10,6 +10,7 @@ const tenttiRoute = require('./routes/tentit');
 const kayttajaRoute = require('./routes/kayttajat');
 const kysymysRoute = require('./routes/kysymykset');
 const vastausRoute = require('./routes/vastaukset');
+const loginRoute = require('./routes/login');
 
 app.use(express.json());
 app.use(cors());
@@ -19,6 +20,7 @@ app.use('/tentit', tenttiRoute);
 app.use('/kysymykset', kysymysRoute);
 app.use('/kayttajat', kayttajaRoute);
 app.use('/vastaukset', vastausRoute);
+app.use('/login', loginRoute);
 
 app.get('/', (req, res) => {
   res.send('You arrived to the root route. Nothing to see here!');

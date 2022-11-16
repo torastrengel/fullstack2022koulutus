@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 // Hae kaikki käyttäjät
 router.get('/', async (req, res) => {
@@ -16,13 +18,15 @@ router.get('/', async (req, res) => {
 // Lisää uusi käyttäjä
 router.post('/', async (req, res) => {
   try {
-    const { nimi, email, isAdmin } = req.body;
-    const values = [nimi, email, isAdmin];
+    const { nimi, email, admin, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const values = [nimi, email, admin, hashedPassword];
     const text =
-      'INSERT INTO kayttaja (nimi, email, admin) VALUES ($1, $2, $3)';
+      'INSERT INTO kayttaja (nimi, email, admin, salasana) VALUES ($1, $2, $3, $4)';
     await db.query(text, values);
     res.status(200).send('Tenttikäyttäjä tallennettu onnistuneesti ✅');
   } catch (error) {
+    console.log('Virhe käyttäjän tallennuksessa!', error);
     res.status(500).send('Tenttikäyttäjän tallennuksessa ilmeni ongelma ❌');
   }
 });
