@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
@@ -10,6 +11,14 @@ const Tentti = ({ dispatch, tentti }) => {
   const muutaLomakkeenTila = () => {
     setLomakeEsilla(!lomakeEsilla);
   };
+
+  useEffect(() => {
+    const haeTenttiById = async () => {
+      try {
+        const result = await axios.get('http://localhost:3001/tentit/');
+      } catch (error) {}
+    };
+  }, []);
 
   const kysymykset = tentti.kysymykset?.map((item, index) => {
     return (
