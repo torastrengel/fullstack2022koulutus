@@ -15,6 +15,7 @@ router.post('/', async (req, res, next) => {
     existingUser = rows[0];
     passwordMatch = await bcrypt.compare(password, existingUser.salasana);
   } catch {
+    res.status(400).send('Käyttäjätunnus tai salasana väärin!');
     const error = 'Tapahtui virhe!';
     return next(error);
   }
@@ -39,7 +40,7 @@ router.post('/', async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: {
+    user: {
       userId: existingUser.id,
       email: existingUser.email,
       isAdmin: existingUser.admin,

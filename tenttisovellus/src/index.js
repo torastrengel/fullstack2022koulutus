@@ -4,7 +4,8 @@ import { createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import ErrorPage from './ErrorPage';
-import Tentti from './Tentti';
+import Tentti, { loader as tenttiLoader } from './Tentti';
+import Login from './Login';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -16,11 +17,20 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
     errorElement: <ErrorPage />,
-  },
-  {
-    path: '/tentit/:tenttiId',
-    element: <Tentti />,
-    errorElement: <ErrorPage />,
+    /* loader: rootLoader, */
+    children: [
+      {
+        path: 'tentit/:tenttiId',
+        element: <Tentti />,
+        errorElement: <ErrorPage />,
+        loader: tenttiLoader,
+      },
+      {
+        path: 'login',
+        element: <Login />,
+        errorElement: <ErrorPage />,
+      },
+    ],
   },
 ]);
 
