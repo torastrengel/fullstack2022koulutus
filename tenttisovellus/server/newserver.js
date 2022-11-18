@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const morgan = require('morgan');
+const helmet = require('helmet');
+const https = require('https');
+const fs = require('fs');
 
 const port = process.env.PORT || 3001;
 
@@ -15,6 +18,7 @@ const loginRoute = require('./routes/login');
 app.use(express.json());
 app.use(cors());
 app.use(morgan('tiny'));
+app.use(helmet());
 
 app.use('/tentit', tenttiRoute);
 app.use('/kysymykset', kysymysRoute);
@@ -26,4 +30,14 @@ app.get('/', (req, res) => {
   res.send('You arrived to the root route. Nothing to see here!');
 });
 
-app.listen(port, () => console.log(`Server started on port: ${port}`));
+https
+  .createServer(
+    {
+      key: fs.readFileSync('./server/cert/server.key'),
+      cert: fs.readFileSync('./server/cert/server.crt'),
+    },
+    app
+  )
+  .listen(port, () => {
+    console.log(`Server is running at port ${port}`);
+  });

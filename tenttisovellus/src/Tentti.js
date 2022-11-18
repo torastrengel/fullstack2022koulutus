@@ -24,7 +24,7 @@ const Tentti = () => {
     const haeTenttiById = async () => {
       try {
         const { data: uusiHaettuTentti } = await axios.get(
-          `http://localhost:3001/tentit/${tenttiId}`
+          `https://localhost:3001/tentit/${tenttiId}`
         );
         setHaettuTentti(uusiHaettuTentti);
       } catch (error) {

@@ -31,7 +31,7 @@ const UusiKysymysForm = ({ dispatch, muutaLomakkeenTila, tenttiId }) => {
     }
 
     try {
-      await axios.post('http://localhost:3001/kysymykset', {
+      await axios.post('https://localhost:3001/kysymykset', {
         kysymys: kysymys,
         pisteet: pisteet,
         tentti_id: tenttiId,
@@ -40,7 +40,7 @@ const UusiKysymysForm = ({ dispatch, muutaLomakkeenTila, tenttiId }) => {
       console.error('Virhe lähettäessä kysymystä DB:hen', error);
     } finally {
       const result = await axios.get(
-        `http://localhost:3001/tentit/${tenttiId}`
+        `https://localhost:3001/tentit/${tenttiId}`
       );
       dispatch({
         type: 'KYSYMYS_LISÄTTIIN',

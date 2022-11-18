@@ -75,7 +75,7 @@ const MainContent = () => {
   useEffect(() => {
     const haeData = async () => {
       try {
-        const result = await axios.get('http://localhost:3001/tentit');
+        const result = await axios.get('https://localhost:3001/tentit');
         console.log('Axios fetch: http://localhost:3001/tentit', result.data);
         dispatch({ type: 'ALUSTA_DATA', payload: result.data });
       } catch (error) {
@@ -90,7 +90,7 @@ const MainContent = () => {
   useEffect(() => {
     const tallennaDataServulle = async () => {
       try {
-        await axios.post('http://localhost:3001');
+        await axios.post('https://localhost:3001');
       } catch (error) {
         console.error('Virhe tallennuksessa:', error);
       }
@@ -114,7 +114,7 @@ const MainContent = () => {
 
     try {
       const result = await axios.get(
-        `http://localhost:3001/tentit/${tenttiId}`
+        `https://localhost:3001/tentit/${tenttiId}`
       );
       dispatch({
         type: 'VAIHDA_TENTTI',

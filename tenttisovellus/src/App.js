@@ -15,7 +15,7 @@ function App() {
 
   useEffect(() => {
     const haeTentit = async () => {
-      const { data } = await axios.get('http://localhost:3001/tentit');
+      const { data } = await axios.get('https://localhost:3001/tentit');
       const result = data.map((item) => (
         <Link key={item.id} to={`tentit/${item.id}`}>
           <Button>{item.nimi}</Button>
