@@ -68,7 +68,6 @@ const Login = () => {
         nimi: register.nimi,
         email: register.email,
         password: register.password,
-        admin: false,
       });
       setRegister({ nimi: '', email: '', password: '', password2: '' });
       console.log(data);
