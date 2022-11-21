@@ -24,7 +24,14 @@ const Tentti = () => {
     const haeTenttiById = async () => {
       try {
         const { data: uusiHaettuTentti } = await axios.get(
-          `https://localhost:3001/tentit/${tenttiId}`
+          `https://localhost:3001/tentit/${tenttiId}`,
+          {
+            headers: {
+              Authorization:
+                localStorage.getItem('tenttisovellus_token') &&
+                `bearer ${localStorage.getItem('tenttisovellus_token')}`,
+            },
+          }
         );
         setHaettuTentti(uusiHaettuTentti);
       } catch (error) {
@@ -63,14 +70,14 @@ const Tentti = () => {
     // </div>
     tenttiHasData && (
       <div className="tentti">
-        <h1>{haettuTentti.tentti.nimi}</h1>
+        <h1>{haettuTentti.tentti?.nimi}</h1>
         {kysymykset}
         <Button onClick={muutaLomakkeenTila} color="secondary">
           {lomakeEsilla ? 'Piilota lomake' : 'Uusi kysymys'}
         </Button>
         {lomakeEsilla && (
           <UusiKysymysForm
-            tenttiId={haettuTentti.tentti.id}
+            tenttiId={haettuTentti.tentti?.id}
             muutaLomakkeenTila={muutaLomakkeenTila}
           />
         )}
