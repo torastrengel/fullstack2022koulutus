@@ -35,7 +35,7 @@ const Login = () => {
           'Sähköpostiosoite tai salasana puuttuu. Täytä molemmat kentät!'
         );
       }
-      const { data } = await axios.post('http://localhost:3001/login', {
+      const { data } = await axios.post('https://localhost:3001/login', {
         email: login.email,
         password: login.password,
       });
@@ -64,10 +64,10 @@ const Login = () => {
         );
       }
 
-      const { data } = await axios.post('http://localhost:3001/kayttajat', {
+      const { data } = await axios.post('https://localhost:3001/kayttajat', {
         nimi: register.nimi,
         email: register.email,
-        password: login.password,
+        password: register.password,
         admin: false,
       });
       setRegister({ nimi: '', email: '', password: '', password2: '' });
