@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const https = require('https');
 const fs = require('fs');
+const { isAdmin } = require('./middlewares/isAdmin');
+const { verifyToken } = require('./middlewares/verifyToken');
 
 const port = process.env.PORT || 3001;
 
@@ -14,6 +16,7 @@ const kayttajaRoute = require('./routes/kayttajat');
 const kysymysRoute = require('./routes/kysymykset');
 const vastausRoute = require('./routes/vastaukset');
 const loginRoute = require('./routes/login');
+const adminRoute = require('./routes/admin');
 
 app.use(express.json());
 app.use(cors());
@@ -25,6 +28,7 @@ app.use('/kysymykset', kysymysRoute);
 app.use('/kayttajat', kayttajaRoute);
 app.use('/vastaukset', vastausRoute);
 app.use('/login', loginRoute);
+app.use('/admin', verifyToken, isAdmin, adminRoute);
 
 app.get('/', (req, res) => {
   res.send('You arrived to the root route. Nothing to see here!');

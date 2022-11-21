@@ -57,22 +57,6 @@ router.get('/:tenttiId', async (req, res) => {
   }
 });
 
-// Lisää uusi tentti
-router.post('/', verifyToken, async (req, res) => {
-  try {
-    const { nimi, kuvaus, voimassaolo, pvm, max_pisteet } = req.body;
-    const values = [nimi, kuvaus, voimassaolo, pvm, max_pisteet];
-    const text =
-      'INSERT INTO tentti (nimi, kuvaus, voimassaolo, pvm, max_pisteet) VALUES ($1, $2, $3, $4, $5)';
-
-    await db.query(text, values);
-    res.status(200).send('Tentti lisätty onnistuneesti! ✅');
-  } catch (error) {
-    console.error('Virhe tentin tallennuksessa:', error);
-    res.status(500).send('Tentin tallennuksessa ilmeni virhe');
-  }
-});
-
 // Lisää uusi tenttisuoritus
 router.post('/:tenttiId/suoritus', async (req, res) => {
   try {

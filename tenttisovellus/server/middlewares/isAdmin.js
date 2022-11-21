@@ -1,12 +1,15 @@
 const db = require('../db');
 
 const isAdmin = async (req, res, next) => {
+  console.log(req);
   try {
     const result = await db.query('SELECT * FROM kayttaja WHERE email = $1', [
       req.decoded?.email,
     ]);
     const isAdmin = result.rows[0].admin;
-    isAdmin && next();
+    if (isAdmin) {
+      return next();
+    }
     res.status(401).send('Ei oikeuksia tähän toimintoon!');
   } catch (error) {
     console.error('Virhe adminin tarkistuksessa', error);
@@ -15,5 +18,5 @@ const isAdmin = async (req, res, next) => {
 };
 
 module.exports = {
-  verifyToken: isAdmin,
+  isAdmin,
 };
