@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import './Tentti.css';
@@ -6,15 +6,19 @@ import './Tentti.css';
 import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
 import UusiKysymysForm from './UusiKysymysForm';
+import { TentitContext, TentitDispatchContext } from './TentitContext';
 
 export async function loader({ params }) {
   return params.tenttiId;
 }
 
+/* Komponentti yhden tentin näyttämistä varten */
+
 const Tentti = () => {
   const tenttiId = useLoaderData();
   const [lomakeEsilla, setLomakeEsilla] = useState(false);
-  const [haettuTentti, setHaettuTentti] = useState({});
+  const dispatch = useContext(TentitDispatchContext);
+  const tentti = useContext(TentitContext);
 
   const muutaLomakkeenTila = () => {
     setLomakeEsilla(!lomakeEsilla);
@@ -33,15 +37,18 @@ const Tentti = () => {
             },
           }
         );
-        setHaettuTentti(uusiHaettuTentti);
+        dispatch({
+          type: 'TENTTI_HAETTU',
+          payload: uusiHaettuTentti,
+        });
       } catch (error) {
         console.error('Tentti.js - Virhe tentin haussa', error);
       }
     };
     haeTenttiById();
-  }, [tenttiId]);
+  }, [tenttiId, dispatch]);
 
-  const kysymykset = haettuTentti.kysymykset?.map((item, index) => {
+  const kysymykset = tentti.kysymykset?.map((item) => {
     return (
       <Kysymys
         key={item.id}
@@ -51,7 +58,7 @@ const Tentti = () => {
     );
   });
 
-  const tenttiHasData = Object.keys(haettuTentti).length > 0;
+  const tenttiHasData = Object.keys(tentti).length > 0;
 
   return (
     // <div className="tentti">
@@ -70,14 +77,14 @@ const Tentti = () => {
     // </div>
     tenttiHasData && (
       <div className="tentti">
-        <h1>{haettuTentti.tentti?.nimi}</h1>
+        <h1>{tentti.tentti?.nimi}</h1>
         {kysymykset}
         <Button onClick={muutaLomakkeenTila} color="secondary">
           {lomakeEsilla ? 'Piilota lomake' : 'Uusi kysymys'}
         </Button>
         {lomakeEsilla && (
           <UusiKysymysForm
-            tenttiId={haettuTentti.tentti?.id}
+            tenttiId={tentti.tentti?.id}
             muutaLomakkeenTila={muutaLomakkeenTila}
           />
         )}

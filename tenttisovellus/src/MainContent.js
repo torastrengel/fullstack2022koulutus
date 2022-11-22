@@ -1,77 +1,8 @@
 import { useReducer, useEffect } from 'react';
 import Tentti from './Tentti';
-import SaveAlert from './SaveAlert';
 import axios from 'axios';
 
-// Tästä alkaa reducer keissit
-const reducer = (state, action) => {
-  const kopio = JSON.parse(JSON.stringify(state));
-  switch (action.type) {
-    case 'KYSYMYS_MUUTETTIIN': {
-      const { kysymys: uusiKysymys, kysymysId } = action.payload;
-      const uudetKysymykset = kopio.kysymykset.map((item) => {
-        if (item.id === kysymysId) {
-          return { ...item, kysymys: uusiKysymys };
-        } else {
-          return item;
-        }
-      });
-
-      return { ...kopio, kysymykset: uudetKysymykset };
-    }
-
-    case 'OIKEELLISUUS_MUUTETTIIN': {
-      const { uusiOikea, vastausId } = action.payload;
-      const uudetVastaukset = kopio.vastaukset.map((item) => {
-        if (item.id === vastausId) {
-          return { ...item, oikein: uusiOikea };
-        } else {
-          return item;
-        }
-      });
-
-      return { ...kopio, vastaukset: uudetVastaukset };
-    }
-
-    case 'VASTAUS_MUUTETTIIN': {
-      const { uusiVastaus, vastausId } = action.payload;
-      const uudetVastaukset = kopio.vastaukset.map((item) => {
-        if (item.id === vastausId) {
-          return { ...item, teksti: uusiVastaus };
-        } else {
-          return item;
-        }
-      });
-
-      return { ...kopio, vastaukset: uudetVastaukset };
-    }
-
-    case 'KYSYMYS_LISÄTTIIN': {
-      return { ...action.payload };
-    }
-
-    case 'ALUSTA_DATA':
-      console.log('Data alustetaan...');
-      return action.payload;
-
-    case 'VAIHDA_TENTTI':
-      console.log('Tentti vaihdettu');
-      return { ...action.payload };
-
-    case 'PÄIVITÄ_TALLENNUS':
-      kopio.dataSaved = action.payload.dataSaved;
-      return kopio;
-
-    default:
-      throw new Error(
-        'Joko actionia ei ole määritetty tai suoritit jotain uskomatonta'
-      );
-  }
-};
-
 const MainContent = () => {
-  const [tentteja, dispatch] = useReducer(reducer, {});
-
   useEffect(() => {
     const haeData = async () => {
       try {
@@ -126,16 +57,18 @@ const MainContent = () => {
   };
 
   // Tentin vaihtonapit
-  const vaihtonapit = tentteja.length > 0 && tentteja.map((item, index) => (
-    <button
-      key={index}
-      className="tentti-nappi"
-      onClick={vaihdatentti}
-      value={item.id}
-    >
-      {item.nimi}
-    </button>
-  ));
+  const vaihtonapit =
+    tentteja.length > 0 &&
+    tentteja.map((item, index) => (
+      <button
+        key={index}
+        className="tentti-nappi"
+        onClick={vaihdatentti}
+        value={item.id}
+      >
+        {item.nimi}
+      </button>
+    ));
 
   return (
     <>

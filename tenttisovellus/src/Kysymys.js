@@ -1,4 +1,8 @@
-const Kysymys = ({ kysymys, dispatch, vastaukset }) => {
+import { useContext } from 'react';
+import { TentitDispatchContext } from './TentitContext';
+
+const Kysymys = ({ kysymys, vastaukset }) => {
+  const dispatch = useContext(TentitDispatchContext);
   const vastausvaihtoehdot = vastaukset.map((item) => {
     return (
       <div key={item.id}>
@@ -13,6 +17,7 @@ const Kysymys = ({ kysymys, dispatch, vastaukset }) => {
               payload: {
                 uusiVastaus: event.target.value,
                 vastausId: item.id,
+                kysymysId: kysymys.id,
               },
             });
           }}

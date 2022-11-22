@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import ErrorPage from './ErrorPage';
 import Tentti, { loader as tenttiLoader } from './Tentti';
+import TenttiLista from './TenttiLista';
 import Login from './Login';
 
 import '@fontsource/roboto/300.css';
@@ -19,6 +20,12 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     /* loader: rootLoader, */
     children: [
+      {
+        path: 'tentit',
+        element: <TenttiLista />,
+        errorElement: <ErrorPage />,
+        loader: tenttiLoader,
+      },
       {
         path: 'tentit/:tenttiId',
         element: <Tentti />,
