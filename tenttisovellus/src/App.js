@@ -1,4 +1,4 @@
-import { useState, useReducer } from 'react';
+import { useState, useReducer, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { TentitContext, TentitDispatchContext } from './TentitContext';
 
@@ -6,12 +6,14 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import axios from 'axios';
 
 /* Reducer keissit - TENTIT */
 const tentitReducer = (tentit, action) => {
   const kopio = JSON.parse(JSON.stringify(tentit));
   switch (action.type) {
     case 'KYSYMYS_MUUTETTIIN': {
+      console.log('tentitReducer:', action.type);
       const { kysymys: uusiKysymys, kysymysId } = action.payload;
       const uudetKysymykset = kopio.kysymykset.map((item) => {
         if (item.id === kysymysId) {
@@ -26,10 +28,11 @@ const tentitReducer = (tentit, action) => {
 
     case 'TENTTI_HAETTU': {
       console.log('tentitReducer:', action.type);
-      return action.payload;
+      return { ...action.payload, dataInitialized: true };
     }
 
     case 'OIKEELLISUUS_MUUTETTIIN': {
+      console.log('tentitReducer:', action.type);
       const { uusiOikea, vastausId } = action.payload;
       const uudetVastaukset = kopio.vastaukset.map((item) => {
         if (item.id === vastausId) {
@@ -69,7 +72,13 @@ const tentitReducer = (tentit, action) => {
       return { ...kopio, kysymykset: muokattuKysymyslista };
     }
 
+    case 'VIRHE': {
+      console.log('tentitReducer:', action.type);
+      return { ...kopio, ...action.payload };
+    }
+
     case 'KYSYMYS_LISÄTTIIN': {
+      console.log('tentitReducer:', action.type);
       return { ...action.payload };
     }
 
@@ -82,10 +91,12 @@ const tentitReducer = (tentit, action) => {
       return { ...action.payload };
 
     case 'PÄIVITÄ_TALLENNUS':
+      console.log('tentitReducer:', action.type);
       kopio.dataSaved = action.payload.dataSaved;
       return kopio;
 
     default:
+      console.log('tentitReducer: default');
       throw new Error(
         'Joko actionia ei ole määritetty tai suoritit jotain uskomatonta'
       );
@@ -94,10 +105,21 @@ const tentitReducer = (tentit, action) => {
 
 function App() {
   const [tentit, dispatch] = useReducer(tentitReducer, {});
-  const [tenttiNapit, setTenttiNapit] = useState([]);
   const [token, setToken] = useState(
     localStorage.getItem('tenttisovellus_token')
   );
+
+  useEffect(() => {
+    const isTokenValid = async () => {
+      const { data } = await axios.post('https://localhost:3001/token', {
+        token: localStorage.getItem('tenttisovellus_token'),
+      });
+      if (!data.success) {
+        signOut();
+      }
+    };
+    localStorage.getItem('tenttisovellus_token') && isTokenValid();
+  }, []);
 
   const signOut = () => {
     localStorage.removeItem('tenttisovellus_token');
@@ -128,7 +150,6 @@ function App() {
           )}
         </Toolbar>
       </AppBar>
-      {tenttiNapit}
       <div className="main-content">
         <TentitContext.Provider value={tentit}>
           <TentitDispatchContext.Provider value={dispatch}>
