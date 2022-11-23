@@ -44,8 +44,6 @@ router.get('/:tenttiId', verifyToken, async (req, res) => {
       };
     });
 
-    console.log(kysymykset);
-    // Kirjoita logiikka tähän, jotta vastaukset yhdistetään kysymyksiin. käytä Reactin Kysymys.js filter logiikkaa tähän
     const tenttiObjekti = {
       tentti: { ...tentti_data[0] },
       kysymykset,

@@ -1,5 +1,8 @@
 import { useContext } from 'react';
 import { TentitDispatchContext } from './TentitContext';
+import axios from 'axios';
+
+const tokenConfig = require('./utils/tokenConfig');
 
 const Kysymys = ({ kysymys, vastaukset }) => {
   const dispatch = useContext(TentitDispatchContext);
@@ -47,16 +50,35 @@ const Kysymys = ({ kysymys, vastaukset }) => {
       <input
         className="kysymys-input"
         type="text"
-        onChange={(event) =>
-          dispatch({
-            type: 'KYSYMYS_MUUTETTIIN',
-            payload: {
-              kysymys: event.target.value,
-              kysymysId: kysymys.id,
-            },
-          })
-        }
-        value={kysymys.kysymys}
+        defaultValue={kysymys.kysymys}
+        onChange={async (event) => {
+          console.log(event.target.value);
+          try {
+            await axios.put(
+              `https://localhost:3001/admin/kysymykset/${kysymys.id}`,
+              {
+                kysymys: event.target.value,
+              },
+              tokenConfig()
+            );
+            console.log('Jälkeen', event.target.value);
+            dispatch({
+              type: 'KYSYMYS_MUUTETTIIN',
+              payload: {
+                kysymys: event.target.value,
+                kysymysId: kysymys.id,
+              },
+            });
+          } catch (error) {
+            console.log(error);
+            dispatch({
+              type: 'VIRHE',
+              payload: {
+                virheteksti: 'Hups! Tapahtui virhe. Aika noloa.',
+              },
+            });
+          }
+        }}
       />
       {vastausvaihtoehdot}
     </div>

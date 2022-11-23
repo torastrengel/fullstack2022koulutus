@@ -8,6 +8,8 @@ import Button from '@mui/material/Button';
 import UusiKysymysForm from './UusiKysymysForm';
 import { TentitContext, TentitDispatchContext } from './TentitContext';
 
+const tokenConfig = require('./utils/tokenConfig');
+
 export async function loader({ params }) {
   return params.tenttiId;
 }
@@ -29,13 +31,7 @@ const Tentti = () => {
       try {
         const { data: uusiHaettuTentti } = await axios.get(
           `https://localhost:3001/tentit/${tenttiId}`,
-          {
-            headers: {
-              Authorization:
-                localStorage.getItem('tenttisovellus_token') &&
-                `bearer ${localStorage.getItem('tenttisovellus_token')}`,
-            },
-          }
+          tokenConfig()
         );
         dispatch({
           type: 'TENTTI_HAETTU',
@@ -46,7 +42,7 @@ const Tentti = () => {
       }
     };
     haeTenttiById();
-  }, [tenttiId, dispatch]);
+  }, []);
 
   const kysymykset = tentti.kysymykset?.map((item) => {
     return (
@@ -75,7 +71,7 @@ const Tentti = () => {
     //   )}
     //   <Button color="primary">Tarkista vastaukset</Button>
     // </div>
-    tenttiHasData && (
+    tenttiHasData ? (
       <div className="tentti">
         <h1>{tentti.tentti?.nimi}</h1>
         {kysymykset}
@@ -89,6 +85,8 @@ const Tentti = () => {
           />
         )}
       </div>
+    ) : (
+      <h1>Loading data...</h1>
     )
   );
 };
