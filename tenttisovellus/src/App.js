@@ -1,12 +1,14 @@
 import { useState, useReducer, useEffect } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { TentitContext, TentitDispatchContext } from './TentitContext';
 
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import Navbar from './Navbar';
+import Home from './Home';
+import Login from './Login';
+
 import axios from 'axios';
+import TenttiLista from './TenttiLista';
+import Tentti from './Tentti';
 
 /* Reducer keissit - TENTIT */
 const tentitReducer = (tentit, action) => {
@@ -67,8 +69,6 @@ const tentitReducer = (tentit, action) => {
         }
       });
 
-      console.log(muokattuKysymyslista);
-
       return { ...kopio, kysymykset: muokattuKysymyslista };
     }
 
@@ -127,37 +127,18 @@ function App() {
   };
 
   return (
-    <div>
-      <AppBar position="static" color="primary">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Link className="nav-header" to="/">
-              Tenttisovellus
-            </Link>
-          </Typography>
-          <Link to="tentit" color="inherit">
-            <Button color="inherit">Tentit</Button>
-          </Link>
-          <Button color="inherit">Tietoa sovelluksesta</Button>
-          {token ? (
-            <Button onClick={signOut} color="inherit">
-              Sign out
-            </Button>
-          ) : (
-            <Link to="login" color="inherit">
-              <Button color="inherit">Login</Button>
-            </Link>
-          )}
-        </Toolbar>
-      </AppBar>
-      <div className="main-content">
-        <TentitContext.Provider value={tentit}>
-          <TentitDispatchContext.Provider value={dispatch}>
-            <Outlet />
-          </TentitDispatchContext.Provider>
-        </TentitContext.Provider>
-      </div>
-    </div>
+    <TentitContext.Provider value={tentit}>
+      <TentitDispatchContext.Provider value={dispatch}>
+        <Routes>
+          <Route path="/" element={<Navbar />}>
+            <Route index element={<Home />} />
+            <Route path="tentit" element={<TenttiLista />} />
+            <Route path="tentit/:id" element={<Tentti />} />
+            <Route path="login" element={<Login />} />
+          </Route>
+        </Routes>
+      </TentitDispatchContext.Provider>
+    </TentitContext.Provider>
   );
 }
 

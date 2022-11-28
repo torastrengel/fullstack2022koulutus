@@ -1,49 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
-import ErrorPage from './ErrorPage';
-import Tentti, { loader as tenttiLoader } from './Tentti';
-import TenttiLista from './TenttiLista';
-import Login from './Login';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <App />,
-    errorElement: <ErrorPage />,
-    /* loader: rootLoader, */
-    children: [
-      {
-        path: 'tentit',
-        element: <TenttiLista />,
-        errorElement: <ErrorPage />,
-        loader: tenttiLoader,
-      },
-      {
-        path: 'tentit/:tenttiId',
-        element: <Tentti />,
-        errorElement: <ErrorPage />,
-        loader: tenttiLoader,
-      },
-      {
-        path: 'login',
-        element: <Login />,
-        errorElement: <ErrorPage />,
-      },
-    ],
-  },
-]);
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );

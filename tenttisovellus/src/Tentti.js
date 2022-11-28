@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './Tentti.css';
 
@@ -10,14 +10,10 @@ import { TentitContext, TentitDispatchContext } from './TentitContext';
 
 const tokenConfig = require('./utils/tokenConfig');
 
-export async function loader({ params }) {
-  return params.tenttiId;
-}
-
 /* Komponentti yhden tentin näyttämistä varten */
 
 const Tentti = () => {
-  const tenttiId = useLoaderData();
+  const { id: tenttiId } = useParams();
   const [lomakeEsilla, setLomakeEsilla] = useState(false);
   const dispatch = useContext(TentitDispatchContext);
   const tentti = useContext(TentitContext);
