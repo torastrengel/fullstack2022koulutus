@@ -13,15 +13,18 @@ router.post('/kysymykset', async (req, res) => {
     await client.query('BEGIN');
     const kysymysQuery =
       'INSERT INTO kysymys (kysymys) VALUES ($1) RETURNING id';
-    const result = await client.query(kysymysQuery, [kysymys]);
+    const { rows } = await client.query(kysymysQuery, [kysymys]);
+    const kysymys_id = rows[0].id;
     const insertQuestionToExam =
       'INSERT INTO tentti_kysymys_liitos(tentti_id, kysymys_id, pisteet) VALUES ($1, $2, $3)';
-    const insertQuestionToExamValues = [tentti_id, result.rows[0].id, pisteet];
+    const insertQuestionToExamValues = [tentti_id, kysymys_id, pisteet];
     await client.query(insertQuestionToExam, insertQuestionToExamValues);
     await client.query('COMMIT');
-    res
-      .status(200)
-      .send(`Kysymys luotu ja yhdistetty tenttiin ID:llä ${tentti_id} ✅`);
+    console.log(`Kysymys luotu ja yhdistetty tenttiin ID:llä ${tentti_id} ✅`);
+    res.status(200).send({
+      message: `Kysymys luotu ja yhdistetty tenttiin ID:llä ${tentti_id} ✅`,
+      kysymys_id,
+    });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Virhe kysymyksen luomisessa:', error);

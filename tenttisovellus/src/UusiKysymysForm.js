@@ -1,29 +1,22 @@
 import { Button } from '@mui/material';
-import { useState } from 'react';
+import { useRef, useState, useContext } from 'react';
 import VaihtoehtoKentta from './VaihtoehtoKentta';
 import axios from 'axios';
+import { TentitDispatchContext, TentitContext } from './TentitContext';
+import tokenConfig from './utils/tokenConfig';
 
-const UusiKysymysForm = ({ dispatch, muutaLomakkeenTila, tenttiId }) => {
-  const [kysymys, setKysymys] = useState('');
-  const [pisteet, setPisteet] = useState(0);
+const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
+  const kysymysRef = useRef(null);
+  const pisteRef = useRef(null);
   const [vaihtoehdot, setVaihtoehdot] = useState([]);
-
-  const muutaKysymys = (e) => {
-    const { value } = e.target;
-
-    setKysymys(value);
-  };
-
-  const muutaPisteet = (e) => {
-    const { value } = e.target;
-
-    setPisteet(+value);
-  };
+  const dispatch = useContext(TentitDispatchContext);
+  const tentit = useContext(TentitContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let kysymys_id = '';
 
-    if (!kysymys || vaihtoehdot.length === 0) {
+    if (!kysymysRef || vaihtoehdot.length === 0) {
       alert(
         'Kysymys ei saa olla tyhjä ja vastausvaihtoehtoja pitää olla enemmän kuin nolla!'
       );
@@ -31,20 +24,30 @@ const UusiKysymysForm = ({ dispatch, muutaLomakkeenTila, tenttiId }) => {
     }
 
     try {
-      await axios.post('https://localhost:3001/kysymykset', {
-        kysymys: kysymys,
-        pisteet: pisteet,
-        tentti_id: tenttiId,
-      });
+      const { data: kysymysData } = await axios.post(
+        'https://localhost:3001/admin/kysymykset',
+        {
+          kysymys: kysymysRef.current.value,
+          pisteet: pisteRef.current.value,
+          tentti_id: tentit.tentti.id,
+        },
+        tokenConfig()
+      );
+      kysymys_id = kysymysData.kysymys_id;
     } catch (error) {
       console.error('Virhe lähettäessä kysymystä DB:hen', error);
     } finally {
       const result = await axios.get(
-        `https://localhost:3001/tentit/${tenttiId}`
+        `https://localhost:3001/tentit/${tentit.tentti.id}`,
+        tokenConfig()
       );
       dispatch({
         type: 'KYSYMYS_LISÄTTIIN',
-        payload: result.data,
+        payload: {
+          tenttiData: result.data,
+          vaihtoehdot: vaihtoehdot,
+          kysymys_id: kysymys_id,
+        },
       });
     }
 
@@ -58,7 +61,6 @@ const UusiKysymysForm = ({ dispatch, muutaLomakkeenTila, tenttiId }) => {
     //   },
     // });
     setVaihtoehdot([]);
-    setKysymys('');
     (() => muutaLomakkeenTila())();
   };
 
@@ -102,18 +104,16 @@ const UusiKysymysForm = ({ dispatch, muutaLomakkeenTila, tenttiId }) => {
   return (
     <form className="uusi-kysymys-form" onSubmit={handleSubmit}>
       <input
+        ref={kysymysRef}
         className="uusi-kysymys-input"
         type="text"
-        value={kysymys}
         name="kysymys"
-        onChange={muutaKysymys}
         placeholder="Kysymys tähän"
       />
       <input
+        ref={pisteRef}
         type="number"
         name="pisteet"
-        value={pisteet}
-        onChange={muutaPisteet}
         placeholder="Kysymyksen pistemäärä"
       />
       {vaihtoehdot.map((item, index) => {
