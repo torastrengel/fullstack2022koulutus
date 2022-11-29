@@ -1,9 +1,15 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
+import { TentitDispatchContext } from './TentitContext';
 
 import './index.css';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useContext(TentitDispatchContext);
+  const isLoggedIn = localStorage.getItem('tenttisovellus_token');
   const [login, setLogin] = useState({
     email: '',
     password: '',
@@ -15,6 +21,11 @@ const Login = () => {
     password: '',
     password2: '',
   });
+
+  useEffect(() => {
+    isLoggedIn && navigate('/');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLoginChange = (event) => {
     const { name, value } = event.target;
@@ -35,15 +46,33 @@ const Login = () => {
           'Sähköpostiosoite tai salasana puuttuu. Täytä molemmat kentät!'
         );
       }
+
       const { data } = await axios.post('https://localhost:3001/login', {
         email: login.email,
         password: login.password,
       });
+
       if (data.user.token) {
-        localStorage.setItem('tenttisovellus_token', data.user.token);
+        dispatch({
+          type: 'KIRJAUDU_SISÄÄN',
+          payload: {
+            isAuth: true,
+            token: data.user.token,
+          },
+        });
+        navigate('/');
       }
     } catch (error) {
       console.error('Login.js - Virhe!', error.response.data);
+      dispatch({
+        type: 'VIRHE',
+        payload: {
+          error: {
+            errorMessage: `Virhe Login.js - ${error.response.data}`,
+            hasError: true,
+          },
+        },
+      });
     }
   };
 
@@ -73,6 +102,15 @@ const Login = () => {
       console.log(data);
     } catch (error) {
       console.error('Login.js - Rekisteröintivirhe!', error);
+      dispatch({
+        type: 'VIRHE',
+        payload: {
+          error: {
+            errorMessage: `Virhe rekisteröinnissä - ${error.response.data}`,
+            hasError: true,
+          },
+        },
+      });
     }
   };
 

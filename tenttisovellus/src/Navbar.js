@@ -1,5 +1,5 @@
-import { useContext } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import SignOut from './SignOut';
 
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 const Navbar = () => {
+  const hasToken = localStorage.getItem('tenttisovellus_token');
   return (
     <>
       <AppBar position="static" color="primary">
@@ -19,10 +20,13 @@ const Navbar = () => {
           <Link to="tentit" color="inherit">
             <Button color="inherit">Tentit</Button>
           </Link>
-          <Button color="inherit">Tietoa sovelluksesta</Button>
-          <Link to="login" color="inherit">
-            <Button color="inherit">Login</Button>
-          </Link>
+          {hasToken ? (
+            <SignOut />
+          ) : (
+            <Link to="login" color="inherit">
+              <Button color="inherit">Login</Button>
+            </Link>
+          )}
         </Toolbar>
       </AppBar>
       <Outlet />

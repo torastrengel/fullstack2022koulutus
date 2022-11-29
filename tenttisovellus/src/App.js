@@ -1,4 +1,4 @@
-import { useState, useReducer, useEffect } from 'react';
+import { useReducer, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { TentitContext, TentitDispatchContext } from './TentitContext';
 
@@ -9,6 +9,9 @@ import Login from './Login';
 import axios from 'axios';
 import TenttiLista from './TenttiLista';
 import Tentti from './Tentti';
+import ProtectedRoute from './ProtectedRoute';
+
+const token = localStorage.getItem('tenttisovellus_token');
 
 /* Reducer keissit - TENTIT */
 const tentitReducer = (tentit, action) => {
@@ -77,6 +80,18 @@ const tentitReducer = (tentit, action) => {
       return { ...kopio, ...action.payload };
     }
 
+    case 'KIRJAUDU_ULOS': {
+      console.log('tentitReducer:', action.type);
+      localStorage.removeItem('tenttisovellus_token');
+      return { ...kopio, isAuthenticated: action.payload };
+    }
+
+    case 'KIRJAUDU_SISÄÄN': {
+      console.log('tentitReducer:', action.type);
+      localStorage.setItem('tenttisovellus_token', action.payload.token);
+      return { ...kopio, isAuthenticated: action.payload.isAuth };
+    }
+
     case 'KYSYMYS_LISÄTTIIN': {
       console.log('tentitReducer:', action.type);
       return { ...action.payload };
@@ -105,9 +120,6 @@ const tentitReducer = (tentit, action) => {
 
 function App() {
   const [tentit, dispatch] = useReducer(tentitReducer, {});
-  const [token, setToken] = useState(
-    localStorage.getItem('tenttisovellus_token')
-  );
 
   useEffect(() => {
     const isTokenValid = async () => {
@@ -115,16 +127,14 @@ function App() {
         token: localStorage.getItem('tenttisovellus_token'),
       });
       if (!data.success) {
-        signOut();
+        localStorage.removeItem('tenttisovellus_token');
+        alert(
+          'Kirjautuminen vanhentunut. Ole hyvä ja kirjaudu sisään uudelleen'
+        );
       }
     };
     localStorage.getItem('tenttisovellus_token') && isTokenValid();
   }, []);
-
-  const signOut = () => {
-    localStorage.removeItem('tenttisovellus_token');
-    setToken(null);
-  };
 
   return (
     <TentitContext.Provider value={tentit}>
@@ -133,7 +143,14 @@ function App() {
           <Route path="/" element={<Navbar />}>
             <Route index element={<Home />} />
             <Route path="tentit" element={<TenttiLista />} />
-            <Route path="tentit/:id" element={<Tentti />} />
+            <Route
+              path="tentit/:id"
+              element={
+                <ProtectedRoute token={token}>
+                  <Tentti />
+                </ProtectedRoute>
+              }
+            />
             <Route path="login" element={<Login />} />
           </Route>
         </Routes>
