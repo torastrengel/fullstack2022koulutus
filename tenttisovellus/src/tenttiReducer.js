@@ -67,14 +67,24 @@ const tentitReducer = (tentit, action) => {
 
     case 'KIRJAUDU_ULOS': {
       console.log('tentitReducer:', action.type);
-      localStorage.removeItem('tenttisovellus_token');
-      return { ...kopio, isAuthenticated: action.payload };
+      return {
+        ...kopio,
+        user: {
+          isAuthenticated: action.payload.isAuth,
+          token: action.payload.token,
+        },
+      };
     }
 
     case 'KIRJAUDU_SISÄÄN': {
       console.log('tentitReducer:', action.type);
-      localStorage.setItem('tenttisovellus_token', action.payload.token);
-      return { ...kopio, isAuthenticated: action.payload.isAuth };
+      return {
+        ...kopio,
+        user: {
+          isAuthenticated: action.payload.isAuth,
+          token: action.payload.token,
+        },
+      };
     }
 
     case 'KYSYMYS_LISÄTTIIN': {
