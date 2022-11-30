@@ -37,14 +37,14 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
     } catch (error) {
       console.error('Virhe lähettäessä kysymystä DB:hen', error);
     } finally {
-      const result = await axios.get(
-        `https://localhost:3001/tentit/${tentit.tentti.id}`,
-        tokenConfig()
-      );
+      // const result = await axios.get(
+      //   `https://localhost:3001/tentit/${tentit.tentti.id}`,
+      //   tokenConfig()
+      // );
       dispatch({
         type: 'KYSYMYS_LISÄTTIIN',
         payload: {
-          tenttiData: result.data,
+          // tenttiData: result.data,
           vaihtoehdot: vaihtoehdot,
           kysymys_id: kysymys_id,
         },
