@@ -28,7 +28,11 @@ router.post('/', async (req, res, next) => {
   let token;
   try {
     token = jwt.sign(
-      { userId: existingUser.id, email: existingUser.email },
+      {
+        userId: existingUser.id,
+        email: existingUser.email,
+        isAdmin: existingUser.admin,
+      },
       'apina',
       { expiresIn: '1h' }
     );
