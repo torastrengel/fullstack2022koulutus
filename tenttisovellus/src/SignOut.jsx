@@ -5,11 +5,14 @@ import { TentitDispatchContext } from './TentitContext';
 const SignOut = () => {
   const dispatch = useContext(TentitDispatchContext);
 
-  const handleSignOut = async () => {
+  const handleSignOut = () => {
     try {
       dispatch({
         type: 'KIRJAUDU_ULOS',
-        payload: null,
+        payload: {
+          isAuth: true,
+          token: null,
+        },
       });
       localStorage.removeItem('tenttisovellus_token');
     } catch (error) {
