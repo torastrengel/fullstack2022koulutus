@@ -24,7 +24,7 @@ const Login = () => {
 
   useEffect(() => {
     isLoggedIn && navigate('/');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLoginChange = (event) => {
@@ -60,6 +60,7 @@ const Login = () => {
             token: data.user.token,
           },
         });
+        localStorage.setItem('tenttisovellus_token', data.user.token);
         navigate('/');
       }
     } catch (error) {
