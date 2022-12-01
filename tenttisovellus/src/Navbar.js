@@ -1,4 +1,7 @@
+import { useContext } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import { UserContext } from './context/UserContext';
+
 import SignOut from './SignOut';
 
 import AppBar from '@mui/material/AppBar';
@@ -7,7 +10,10 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 const Navbar = () => {
-  const hasToken = localStorage.getItem('tenttisovellus_token');
+  const { user } = useContext(UserContext);
+  const isLoggedIn = user.token || localStorage.getItem('tenttisovellus_token');
+  const isAdmin =
+    localStorage.getItem('tenttisovellus_user_is_admin') === 'true';
   return (
     <>
       <AppBar position="static" color="primary">
@@ -20,7 +26,12 @@ const Navbar = () => {
           <Link to="tentit" color="inherit">
             <Button color="inherit">Tentit</Button>
           </Link>
-          {hasToken ? (
+          {isAdmin && (
+            <Link to="admin/lisaatentti" color="inherit">
+              <Button color="inherit">Uusi tentti</Button>
+            </Link>
+          )}
+          {isLoggedIn ? (
             <SignOut />
           ) : (
             <Link to="login" color="inherit">
