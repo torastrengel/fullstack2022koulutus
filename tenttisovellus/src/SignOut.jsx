@@ -1,28 +1,19 @@
 import { Button } from '@mui/material';
 import { useContext } from 'react';
-import { TentitDispatchContext } from './TentitContext';
+import { UserContext } from './context/UserContext';
 
 const SignOut = () => {
-  const dispatch = useContext(TentitDispatchContext);
-
+  const { setUser, setIsAuth } = useContext(UserContext);
   const handleSignOut = () => {
     try {
-      dispatch({
-        type: 'KIRJAUDU_ULOS',
-        payload: {
-          isAuth: true,
-          token: null,
-        },
-      });
       localStorage.removeItem('tenttisovellus_token');
+      localStorage.removeItem('tenttisovellus_user_id');
+      localStorage.removeItem('tenttisovellus_user_email');
+      localStorage.removeItem('tenttisovellus_user_is_admin');
+      setUser({ token: null });
+      setIsAuth(false);
     } catch (error) {
       console.error('Virhe uloskirjautuessa:', error);
-      dispatch({
-        type: 'VIRHE',
-        payload: {
-          errorMessage: 'Virhe uloskirjautumisessa!',
-        },
-      });
     }
   };
 

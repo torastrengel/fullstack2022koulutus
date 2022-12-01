@@ -2,15 +2,14 @@ import { Button } from '@mui/material';
 import { useRef, useState, useContext } from 'react';
 import VaihtoehtoKentta from './VaihtoehtoKentta';
 import axios from 'axios';
-import { TentitDispatchContext, TentitContext } from './TentitContext';
+import { TenttiContext } from './context/TenttiContext';
 import tokenConfig from './utils/tokenConfig';
 
 const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
   const kysymysRef = useRef(null);
   const pisteRef = useRef(null);
   const [vaihtoehdot, setVaihtoehdot] = useState([]);
-  const dispatch = useContext(TentitDispatchContext);
-  const tentit = useContext(TentitContext);
+  const { dispatch, tentti } = useContext(TenttiContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +28,7 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
         {
           kysymys: kysymysRef.current.value,
           pisteet: pisteRef.current.value,
-          tentti_id: tentit.tentti.id,
+          tentti_id: tentti.tentti.id,
         },
         tokenConfig()
       );

@@ -1,5 +1,5 @@
 /* Reducer keissit - TENTIT */
-const tentitReducer = (tentit, action) => {
+const tenttiReducer = (tentit, action) => {
   const kopio = JSON.parse(JSON.stringify(tentit));
   switch (action.type) {
     case 'KYSYMYS_MUUTETTIIN': {
@@ -114,4 +114,4 @@ const tentitReducer = (tentit, action) => {
   }
 };
 
-module.exports = tentitReducer;
+module.exports = tenttiReducer;
