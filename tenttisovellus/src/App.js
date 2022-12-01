@@ -1,9 +1,10 @@
-import { useReducer, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { TentitContext, TentitDispatchContext } from './TentitContext';
+import { UserContextProvider } from './context/UserContext';
+import { TenttiContextProvider } from './context/TenttiContext';
 import axios from 'axios';
-import tentitReducer from './tenttiReducer';
 
+/* USERIN KOMPONENTIT */
 import Navbar from './Navbar';
 import Home from './Home';
 import Login from './Login';
@@ -11,11 +12,12 @@ import TenttiLista from './TenttiLista';
 import Tentti from './Tentti';
 import ProtectedRoute from './ProtectedRoute';
 
+/* ADMIN KOMPONENTIT */
+import LisaaTentti from './admin/LisaaTentti';
+
 const token = localStorage.getItem('tenttisovellus_token');
 
 function App() {
-  const [tentit, dispatch] = useReducer(tentitReducer, {});
-
   useEffect(() => {
     const isTokenValid = async () => {
       const { data } = await axios.post('https://localhost:3001/token', {
@@ -32,25 +34,32 @@ function App() {
   }, []);
 
   return (
-    <TentitContext.Provider value={tentit}>
-      <TentitDispatchContext.Provider value={dispatch}>
+    <UserContextProvider>
+      <TenttiContextProvider>
+        <Navbar />
         <Routes>
-          <Route path="/" element={<Navbar />}>
-            <Route index element={<Home />} />
-            <Route path="tentit" element={<TenttiLista />} />
-            <Route
-              path="tentit/:id"
-              element={
-                <ProtectedRoute token={token}>
-                  <Tentti />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="login" element={<Login />} />
-          </Route>
+          <Route index element={<Home />} />
+          <Route path="tentit" element={<TenttiLista />} />
+          <Route
+            path="tentit/:id"
+            element={
+              <ProtectedRoute token={token}>
+                <Tentti />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="login" element={<Login />} />
+          <Route
+            path="admin/lisaatentti"
+            element={
+              <ProtectedRoute token={token} isAdminRoute={true}>
+                <LisaaTentti />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
-      </TentitDispatchContext.Provider>
-    </TentitContext.Provider>
+      </TenttiContextProvider>
+    </UserContextProvider>
   );
 }
 
