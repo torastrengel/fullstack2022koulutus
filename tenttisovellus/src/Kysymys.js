@@ -1,11 +1,11 @@
 import { useContext } from 'react';
-import { TentitDispatchContext } from './TentitContext';
+import { TenttiContext } from './context/TenttiContext';
 import axios from 'axios';
 
 const tokenConfig = require('./utils/tokenConfig');
 
 const Kysymys = ({ kysymys, vastaukset }) => {
-  const dispatch = useContext(TentitDispatchContext);
+  const { dispatch } = useContext(TenttiContext);
   const vastausvaihtoehdot = vastaukset.map((item) => {
     return (
       <div key={item.id}>
@@ -52,7 +52,6 @@ const Kysymys = ({ kysymys, vastaukset }) => {
         type="text"
         defaultValue={kysymys.kysymys}
         onChange={async (event) => {
-          console.log(event.target.value);
           try {
             await axios.put(
               `https://localhost:3001/admin/kysymykset/${kysymys.id}`,
@@ -61,7 +60,6 @@ const Kysymys = ({ kysymys, vastaukset }) => {
               },
               tokenConfig()
             );
-            console.log('Jälkeen', event.target.value);
             dispatch({
               type: 'KYSYMYS_MUUTETTIIN',
               payload: {

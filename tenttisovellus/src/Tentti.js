@@ -6,7 +6,7 @@ import './Tentti.css';
 import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
 import UusiKysymysForm from './UusiKysymysForm';
-import { TentitContext, TentitDispatchContext } from './TentitContext';
+import { TenttiContext } from './context/TenttiContext';
 
 const tokenConfig = require('./utils/tokenConfig');
 
@@ -15,8 +15,7 @@ const tokenConfig = require('./utils/tokenConfig');
 const Tentti = () => {
   const { id: tenttiId } = useParams();
   const [lomakeEsilla, setLomakeEsilla] = useState(false);
-  const dispatch = useContext(TentitDispatchContext);
-  const tentti = useContext(TentitContext);
+  const { dispatch, tentti } = useContext(TenttiContext);
 
   const muutaLomakkeenTila = () => {
     setLomakeEsilla(!lomakeEsilla);
