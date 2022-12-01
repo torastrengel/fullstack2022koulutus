@@ -24,10 +24,17 @@ router.post('/', async (req, res) => {
     const text =
       'INSERT INTO kayttaja (nimi, email, salasana) VALUES ($1, $2, $3)';
     await db.query(text, values);
-    res.status(200).send('Tenttikäyttäjä tallennettu onnistuneesti ✅');
+    res.status(200).send({
+      success: true,
+      message: 'Tenttikäyttäjä tallennettu onnistuneesti ✅',
+    });
   } catch (error) {
     console.log('Virhe käyttäjän tallennuksessa!', error);
-    res.status(500).send('Tenttikäyttäjän tallennuksessa ilmeni ongelma ❌');
+    res.status(500).send({
+      success: false,
+      message: 'Tenttikäyttäjän tallennuksessa ilmeni ongelma ❌',
+      errorMessage: error,
+    });
   }
 });
 

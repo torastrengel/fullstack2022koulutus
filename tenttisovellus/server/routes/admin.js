@@ -79,10 +79,17 @@ router.post('/tentit', async (req, res) => {
       'INSERT INTO tentti (nimi, kuvaus, voimassaolo, pvm, max_pisteet) VALUES ($1, $2, $3, $4, $5)';
 
     await db.query(text, values);
-    res.status(200).send('Tentti lisätty onnistuneesti! ✅');
+    res.status(200).send({
+      success: true,
+      message: 'Tentti lisätty onnistuneesti! ✅',
+    });
   } catch (error) {
     console.error('Virhe tentin tallennuksessa:', error);
-    res.status(500).send('Tentin tallennuksessa ilmeni virhe');
+    res.status(500).send({
+      success: false,
+      message: 'Tentin tallennuksessa ilmeni virhe',
+      errorMessage: error,
+    });
   }
 });
 

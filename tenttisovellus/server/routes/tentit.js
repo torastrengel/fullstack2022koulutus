@@ -3,10 +3,11 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// Hae kaikki tentit
+// Hae kaikki voimassaolevat tentit
 router.get('/', async (req, res) => {
   try {
-    const text = 'SELECT * FROM tentti ORDER BY id ASC';
+    const text =
+      'SELECT * FROM tentti WHERE voimassaolo = true ORDER BY id ASC';
     const { rows } = await db.query(text);
     res.status(200).send(rows);
   } catch (error) {

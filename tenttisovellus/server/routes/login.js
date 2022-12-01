@@ -44,6 +44,7 @@ router.post('/', async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: 'Kirjautuminen onnistui! 🏄‍♂️',
     user: {
       userId: existingUser.id,
       email: existingUser.email,
