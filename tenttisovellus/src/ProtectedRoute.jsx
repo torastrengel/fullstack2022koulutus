@@ -4,17 +4,17 @@ import { UserContext } from './context/UserContext';
 
 const ProtectedRoute = ({
   children,
-  token,
   isAdminRoute = false,
   redirectPath = '/',
 }) => {
   const { user } = useContext(UserContext);
+  const token = user.token;
   if (!token) {
     return <Navigate to={redirectPath} />;
   }
 
   if (isAdminRoute && token) {
-    if (user.isAdmin === 'true') {
+    if (user.isAdmin) {
       console.log('Admin oikeudet, teretulemast!');
       return children;
     } else {

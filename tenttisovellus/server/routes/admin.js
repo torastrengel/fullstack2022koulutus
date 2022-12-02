@@ -104,10 +104,17 @@ router.post('/vastaukset', async (req, res) => {
     const text =
       'INSERT INTO vastaus (oikein, teksti, kysymys_id) VALUES ($1, $2, $3)';
     await db.query(text, values);
-    res.status(200).send('Tenttivastaus tallennettu onnistuneesti ✅');
+    res.status(200).send({
+      success: true,
+      message: 'Tenttivastaus tallennettu onnistuneesti ✅',
+    });
   } catch (error) {
     console.error('Virhe:', error);
-    res.status(500).send('Tenttivastauksen tallentamisessa ilmeni ongelma ❌');
+    res.status(500).send({
+      success: false,
+      message: 'Tenttivastauksen tallentamisessa ilmeni ongelma ❌',
+      errorMessage: error,
+    });
   }
 });
 
@@ -136,13 +143,16 @@ router.put('/vastaukset/:id', async (req, res) => {
       'UPDATE vastaus SET oikein = ($1), teksti = ($2) WHERE id = ($3)';
     const values = [onkoOikein, vastaus, req.params.id];
     await db.query(text, values);
-    res
-      .status(200)
-      .send(`Vastaus ID:llä ${req.params.id} päivitettiin onnistuneesti ✅`);
+    res.status(200).send({
+      success: true,
+      message: `Vastaus ID:llä ${req.params.id} päivitettiin onnistuneesti ✅`,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .send(`Vastauksen ID:llä ${req.params.id} ei onnistuttu päivittämään ❌`);
+    res.status(500).send({
+      success: false,
+      message: `Vastauksen ID:llä ${req.params.id} ei onnistuttu päivittämään ❌`,
+      errorMessage: error,
+    });
   }
 });
 

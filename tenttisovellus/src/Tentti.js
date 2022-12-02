@@ -1,12 +1,12 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import './Tentti.css';
 
 import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
 import UusiKysymysForm from './UusiKysymysForm';
 import { TenttiContext } from './context/TenttiContext';
+import { useAxios } from './hooks/useAxios';
 
 const tokenConfig = require('./utils/tokenConfig');
 
@@ -16,28 +16,37 @@ const Tentti = () => {
   const { id: tenttiId } = useParams();
   const [lomakeEsilla, setLomakeEsilla] = useState(false);
   const { dispatch, tentti } = useContext(TenttiContext);
+  const {
+    data: uusiHaettuTentti,
+    loading,
+    error,
+  } = useAxios({
+    method: 'GET',
+    url: `/tentit/${tenttiId}`,
+    ...tokenConfig(),
+  });
+
+  console.log('Yksi tentti', tentti);
+
+  useEffect(() => {
+    dispatch({
+      type: 'TENTTI_HAETTU',
+      payload: uusiHaettuTentti,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uusiHaettuTentti]);
+
+  if (loading) {
+    return <h1>Fetching data from a database, hold your horses...</h1>;
+  }
+
+  if (error) {
+    return <h1>{error.message}</h1>;
+  }
 
   const muutaLomakkeenTila = () => {
     setLomakeEsilla(!lomakeEsilla);
   };
-
-  useEffect(() => {
-    const haeTenttiById = async () => {
-      try {
-        const { data: uusiHaettuTentti } = await axios.get(
-          `https://localhost:3001/tentit/${tenttiId}`,
-          tokenConfig()
-        );
-        dispatch({
-          type: 'TENTTI_HAETTU',
-          payload: uusiHaettuTentti,
-        });
-      } catch (error) {
-        console.error('Tentti.js - Virhe tentin haussa', error);
-      }
-    };
-    haeTenttiById();
-  }, []);
 
   const kysymykset = tentti.kysymykset?.map((item) => {
     return (
@@ -49,40 +58,20 @@ const Tentti = () => {
     );
   });
 
-  const tenttiHasData = Object.keys(tentti).length > 0;
-
   return (
-    // <div className="tentti">
-    //   {kysymykset}
-    //   <Button onClick={muutaLomakkeenTila} color="secondary">
-    //     {lomakeEsilla ? 'Piilota lomake' : 'Uusi kysymys'}
-    //   </Button>
-    //   {lomakeEsilla && (
-    //     <UusiKysymysForm
-    //       tenttiId={tentti.tentti.id}
-    //       muutaLomakkeenTila={muutaLomakkeenTila}
-    //       dispatch={dispatch}
-    //     />
-    //   )}
-    //   <Button color="primary">Tarkista vastaukset</Button>
-    // </div>
-    tenttiHasData ? (
-      <div className="tentti">
-        <h1>{tentti.tentti?.nimi}</h1>
-        {kysymykset}
-        <Button onClick={muutaLomakkeenTila} color="secondary">
-          {lomakeEsilla ? 'Piilota lomake' : 'Uusi kysymys'}
-        </Button>
-        {lomakeEsilla && (
-          <UusiKysymysForm
-            tenttiId={tentti.tentti?.id}
-            muutaLomakkeenTila={muutaLomakkeenTila}
-          />
-        )}
-      </div>
-    ) : (
-      <h1>Loading data...</h1>
-    )
+    <div className="tentti">
+      <h1>{tentti.tentti?.nimi}</h1>
+      {kysymykset}
+      <Button onClick={muutaLomakkeenTila} color="secondary">
+        {lomakeEsilla ? 'Piilota lomake' : 'Uusi kysymys'}
+      </Button>
+      {lomakeEsilla && (
+        <UusiKysymysForm
+          tenttiId={tentti.tentti?.id}
+          muutaLomakkeenTila={muutaLomakkeenTila}
+        />
+      )}
+    </div>
   );
 };
 

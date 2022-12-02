@@ -24,21 +24,25 @@ const tenttiReducer = (tentit, action) => {
     case 'OIKEELLISUUS_MUUTETTIIN': {
       console.log('tentitReducer:', action.type);
       const { uusiOikea, vastausId } = action.payload;
-      const uudetVastaukset = kopio.vastaukset.map((item) => {
-        if (item.id === vastausId) {
-          return { ...item, oikein: uusiOikea };
-        } else {
-          return item;
-        }
+      const uudetVastaukset = kopio.kysymykset.map((kysymys) => {
+        return {
+          ...kysymys,
+          vastausvaihtoehdot: kysymys.vastausvaihtoehdot.map((vastaus) => {
+            if (vastausId === vastaus.id) {
+              return { ...vastaus, oikein: uusiOikea };
+            } else {
+              return vastaus;
+            }
+          }),
+        };
       });
 
-      return { ...kopio, vastaukset: uudetVastaukset };
+      return { ...kopio, kysymykset: uudetVastaukset };
     }
 
     case 'VASTAUS_MUUTETTIIN': {
       console.log('tentitReducer:', action.type);
       const { uusiVastaus, vastausId, kysymysId } = action.payload;
-      console.log(uusiVastaus);
 
       const muokattuKysymyslista = kopio.kysymykset.map((kysymys) => {
         if (kysymys.id === kysymysId) {
@@ -89,8 +93,27 @@ const tenttiReducer = (tentit, action) => {
 
     case 'KYSYMYS_LISÄTTIIN': {
       console.log('tentitReducer:', action.type);
-      console.log(action.payload);
-      return { ...action.payload.tenttiData };
+      const { kysymys_id, kysymys, vaihtoehdot } = action.payload;
+      console.log(vaihtoehdot);
+      const vastaukset = vaihtoehdot.map((item) => {
+        return {
+          id: item.id,
+          kysymys_id: kysymys_id,
+          oikein: item.oikein,
+          teksti: item.teksti,
+        };
+      });
+      return {
+        ...kopio,
+        kysymykset: [
+          ...kopio.kysymykset,
+          {
+            id: kysymys_id,
+            kysymys: kysymys,
+            vastausvaihtoehdot: [...vastaukset],
+          },
+        ],
+      };
     }
 
     case 'ALUSTA_DATA':

@@ -11,9 +11,7 @@ import Button from '@mui/material/Button';
 
 const Navbar = () => {
   const { user } = useContext(UserContext);
-  const isLoggedIn = user.token || localStorage.getItem('tenttisovellus_token');
-  const isAdmin =
-    localStorage.getItem('tenttisovellus_user_is_admin') === 'true';
+  const isLoggedIn = user.token;
   return (
     <>
       <AppBar position="static" color="primary">
@@ -26,7 +24,7 @@ const Navbar = () => {
           <Link to="tentit" color="inherit">
             <Button color="inherit">Tentit</Button>
           </Link>
-          {isAdmin && (
+          {user.isAdmin && (
             <Link to="admin/lisaatentti" color="inherit">
               <Button color="inherit">Uusi tentti</Button>
             </Link>

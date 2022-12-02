@@ -13,14 +13,14 @@ const VaihtoehtoKentta = ({
         className="lisaa-kysymys kentta"
         type="text"
         placeholder="vaihtoehto"
-        name="vastaus"
+        name="teksti"
         value={vastaus}
         onChange={(e) => muutaVaihtoehtoKenttaa(e, id)}
       />
       <input
         className="lisaa-kysymys checkbox"
         type="checkbox"
-        name="onkoOikea"
+        name="oikein"
         checked={onkoOikea}
         onChange={(e) => muutaVaihtoehtoKenttaa(e, id)}
       />

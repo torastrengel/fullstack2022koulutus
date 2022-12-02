@@ -6,8 +6,8 @@ import { TenttiContext } from './context/TenttiContext';
 import tokenConfig from './utils/tokenConfig';
 
 const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
-  const kysymysRef = useRef(null);
-  const pisteRef = useRef(null);
+  const kysymysRef = useRef();
+  const pisteRef = useRef();
   const [vaihtoehdot, setVaihtoehdot] = useState([]);
   const { dispatch, tentti } = useContext(TenttiContext);
 
@@ -15,7 +15,7 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
     e.preventDefault();
     let kysymys_id = '';
 
-    if (!kysymysRef || vaihtoehdot.length === 0) {
+    if (!kysymysRef.current.value || vaihtoehdot.length === 0) {
       alert(
         'Kysymys ei saa olla tyhjä ja vastausvaihtoehtoja pitää olla enemmän kuin nolla!'
       );
@@ -40,10 +40,30 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
       //   `https://localhost:3001/tentit/${tentit.tentti.id}`,
       //   tokenConfig()
       // );
+      vaihtoehdot.forEach(async (item) => {
+        try {
+          await axios.post(
+            'https://localhost:3001/admin/vastaukset',
+            {
+              onkoOikein: item.oikein,
+              vastaus: item.teksti,
+              kysymys_id: kysymys_id,
+            },
+            tokenConfig()
+          );
+        } catch (error) {
+          dispatch({
+            type: 'VIRHE',
+            payload: {
+              message: 'Virhe vastauksen lähettämisessä tietokantaan!',
+            },
+          });
+        }
+      });
       dispatch({
         type: 'KYSYMYS_LISÄTTIIN',
         payload: {
-          // tenttiData: result.data,
+          kysymys: kysymysRef.current.value,
           vaihtoehdot: vaihtoehdot,
           kysymys_id: kysymys_id,
         },
@@ -68,6 +88,7 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
       id: vaihtoehdot.length + 1,
       teksti: '',
       oikein: false,
+      kysymys_id: '',
     };
 
     setVaihtoehdot([...vaihtoehdot, uusiKentta]);
@@ -84,7 +105,7 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
     if (type === 'checkbox') {
       const muuttuneetArvot = vaihtoehdotKopio.map((item) => {
         if (item.id === id) {
-          return { ...item, [name]: !item.onkoOikea };
+          return { ...item, [name]: !item.oikein };
         }
         return { ...item };
       });

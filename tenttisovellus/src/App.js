@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { UserContextProvider } from './context/UserContext';
 import { TenttiContextProvider } from './context/TenttiContext';
@@ -15,9 +15,7 @@ import ProtectedRoute from './ProtectedRoute';
 /* ADMIN KOMPONENTIT */
 import LisaaTentti from './admin/LisaaTentti';
 
-const token = localStorage.getItem('tenttisovellus_token');
-
-function App() {
+const App = () => {
   useEffect(() => {
     const isTokenValid = async () => {
       const { data } = await axios.post('https://localhost:3001/token', {
@@ -43,7 +41,7 @@ function App() {
           <Route
             path="tentit/:id"
             element={
-              <ProtectedRoute token={token}>
+              <ProtectedRoute>
                 <Tentti />
               </ProtectedRoute>
             }
@@ -52,7 +50,7 @@ function App() {
           <Route
             path="admin/lisaatentti"
             element={
-              <ProtectedRoute token={token} isAdminRoute={true}>
+              <ProtectedRoute isAdminRoute={true}>
                 <LisaaTentti />
               </ProtectedRoute>
             }
@@ -61,6 +59,6 @@ function App() {
       </TenttiContextProvider>
     </UserContextProvider>
   );
-}
+};
 
 export default App;
