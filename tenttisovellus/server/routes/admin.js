@@ -70,6 +70,25 @@ router.put('/kysymykset/:id', async (req, res) => {
 
 /* TENTIT */
 
+// Hae KAIKKI tentit
+router.get('/tentit', async (req, res) => {
+  try {
+    const text = 'SELECT * FROM tentti ORDER BY id ASC';
+    const { rows } = await db.query(text);
+    res.status(200).send({
+      success: true,
+      results: rows,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Tenttien haussa ilmeni ongelmia',
+      errorMessage: error,
+    });
+    console.error(`admin: tenttien haussa ilmeni ongelma: ${error}`);
+  }
+});
+
 // Lisää uusi tentti
 router.post('/tentit', async (req, res) => {
   try {
@@ -90,6 +109,34 @@ router.post('/tentit', async (req, res) => {
       message: 'Tentin tallennuksessa ilmeni virhe',
       errorMessage: error,
     });
+  }
+});
+
+// Poista tentti ID:n avulla
+router.delete('/tentit/:id', async (req, res) => {
+  const client = await db.connect();
+
+  try {
+    await client.query('BEGIN');
+    const tenttiQuery = 'DELETE FROM tentti WHERE id = ($1)';
+    const liitosQuery =
+      'DELETE FROM tentti_kysymys_liitos WHERE tentti_id = ($1)';
+    await client.query(liitosQuery, [req.params.id]);
+    await client.query(tenttiQuery, [req.params.id]);
+    await client.query('COMMIT');
+    res.status(200).send({
+      success: true,
+      message: `Tentti ID:llä ${req.params.id} poistettiin onnistuneesti ✅`,
+    });
+  } catch (error) {
+    console.error('Tentin poistossa ilmeni virhe:', error);
+    res.status(500).send({
+      success: false,
+      message: 'Tentin poistossa ilmeni virhe',
+      errorMessage: error,
+    });
+  } finally {
+    client.release();
   }
 });
 

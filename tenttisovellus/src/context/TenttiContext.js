@@ -4,7 +4,7 @@ import tenttiReducer from '../tenttiReducer';
 export const TenttiContext = createContext(null);
 
 export const TenttiContextProvider = ({ children }) => {
-  const [tentti, dispatch] = useReducer(tenttiReducer, {});
+  const [tentti, dispatch] = useReducer(tenttiReducer, { tenttilista: [] });
 
   const value = {
     tentti,

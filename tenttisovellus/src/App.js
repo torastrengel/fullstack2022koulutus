@@ -25,10 +25,10 @@ const App = () => {
       });
       if (!data.success) {
         localStorage.removeItem('tenttisovellus_token');
-        localStorage.removeItem('tenttisovellus_userId');
+        localStorage.removeItem('tenttisovellus_user_id');
         localStorage.removeItem('tenttisovellus_user_email');
         localStorage.removeItem('tenttisovellus_user_is_admin');
-        setUser(null);
+        setUser({});
         alert(
           'Kirjautuminen vanhentunut. Ole hyvä ja kirjaudu sisään uudelleen'
         );

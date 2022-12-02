@@ -2,6 +2,19 @@
 const tenttiReducer = (tentit, action) => {
   const kopio = JSON.parse(JSON.stringify(tentit));
   switch (action.type) {
+    case 'ADMIN/TENTIT_HAETTU': {
+      console.log('tenttiReducer', action.type);
+      return { ...kopio, tenttilista: action.payload };
+    }
+
+    case 'ADMIN/POISTA_TENTTI': {
+      console.log('tenttiReducer', action.type);
+      const uudetTentit = kopio.tenttilista.filter(
+        (item) => item.id !== action.payload
+      );
+      return { ...kopio, tenttilista: uudetTentit };
+    }
+
     case 'KYSYMYS_MUUTETTIIN': {
       console.log('tentitReducer:', action.type);
       const { kysymys: uusiKysymys, kysymysId } = action.payload;
@@ -18,7 +31,7 @@ const tenttiReducer = (tentit, action) => {
 
     case 'TENTTI_HAETTU': {
       console.log('tentitReducer:', action.type);
-      return { ...action.payload, dataInitialized: true };
+      return { ...action.payload };
     }
 
     case 'OIKEELLISUUS_MUUTETTIIN': {

@@ -79,20 +79,6 @@ router.post('/:tenttiId/suoritus', async (req, res) => {
   }
 });
 
-// Poista tentti ID:n avulla
-router.delete('/:id', async (req, res) => {
-  try {
-    const text = 'DELETE FROM tentti WHERE id = ($1)';
-    await db.query(text, [req.params.id]);
-    res
-      .status(200)
-      .send(`Tentti ID:llä ${req.params.id} poistettiin onnistuneesti ✅`);
-  } catch (error) {
-    console.error('Tentin poistossa ilmeni virhe:', error);
-    res.status(500).send('Tentin poistossa ilmeni virhe');
-  }
-});
-
 // Muokkaa tenttiä ID:n avulla
 router.patch('/:id', async (req, res) => {
   try {
