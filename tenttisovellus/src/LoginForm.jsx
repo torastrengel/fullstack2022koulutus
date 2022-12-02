@@ -6,7 +6,7 @@ import jwt_decode from 'jwt-decode';
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { setUser, setIsAuth } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const [email, setEmail] = useState('');
   const [pwd, setPwd] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
@@ -37,7 +37,6 @@ const LoginForm = () => {
           isAdmin,
           token: data.user.token,
         });
-        setIsAuth(true);
         setStatusMessage(data.message);
         setTimeout(() => {
           setStatusMessage('');

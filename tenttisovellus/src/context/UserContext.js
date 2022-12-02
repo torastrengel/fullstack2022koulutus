@@ -9,7 +9,7 @@ export const UserContextProvider = ({ children }) => {
     isAdmin: JSON.parse(localStorage.getItem('tenttisovellus_user_is_admin')),
     token: localStorage.getItem('tenttisovellus_token'),
   });
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(user.token ? true : false);
 
   const value = {
     user,

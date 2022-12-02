@@ -1,6 +1,6 @@
 import { useEffect, useContext } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { UserContextProvider } from './context/UserContext';
+import { UserContext } from './context/UserContext';
 import { TenttiContextProvider } from './context/TenttiContext';
 import axios from 'axios';
 
@@ -16,6 +16,7 @@ import ProtectedRoute from './ProtectedRoute';
 import LisaaTentti from './admin/LisaaTentti';
 
 const App = () => {
+  const { setUser } = useContext(UserContext);
   useEffect(() => {
     const isTokenValid = async () => {
       const { data } = await axios.post('https://localhost:3001/token', {
@@ -23,41 +24,44 @@ const App = () => {
       });
       if (!data.success) {
         localStorage.removeItem('tenttisovellus_token');
+        localStorage.removeItem('tenttisovellus_userId');
+        localStorage.removeItem('tenttisovellus_user_email');
+        localStorage.removeItem('tenttisovellus_user_is_admin');
+        setUser(null);
         alert(
           'Kirjautuminen vanhentunut. Ole hyvä ja kirjaudu sisään uudelleen'
         );
       }
     };
     localStorage.getItem('tenttisovellus_token') && isTokenValid();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <UserContextProvider>
-      <TenttiContextProvider>
-        <Navbar />
-        <Routes>
-          <Route index element={<Home />} />
-          <Route path="tentit" element={<TenttiLista />} />
-          <Route
-            path="tentit/:id"
-            element={
-              <ProtectedRoute>
-                <Tentti />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="login" element={<Login />} />
-          <Route
-            path="admin/lisaatentti"
-            element={
-              <ProtectedRoute isAdminRoute={true}>
-                <LisaaTentti />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </TenttiContextProvider>
-    </UserContextProvider>
+    <TenttiContextProvider>
+      <Navbar />
+      <Routes>
+        <Route index element={<Home />} />
+        <Route path="tentit" element={<TenttiLista />} />
+        <Route
+          path="tentit/:id"
+          element={
+            <ProtectedRoute>
+              <Tentti />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="login" element={<Login />} />
+        <Route
+          path="admin/lisaatentti"
+          element={
+            <ProtectedRoute isAdminRoute={true}>
+              <LisaaTentti />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </TenttiContextProvider>
   );
 };
 
