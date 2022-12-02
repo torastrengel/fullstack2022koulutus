@@ -29,6 +29,11 @@ const Navbar = () => {
               <Button color="inherit">Uusi tentti</Button>
             </Link>
           )}
+          {user.isAdmin && (
+            <Link to="admin/poistatentti" color="inherit">
+              <Button color="inherit">Poista tentteja</Button>
+            </Link>
+          )}
           {isLoggedIn ? (
             <SignOut />
           ) : (
