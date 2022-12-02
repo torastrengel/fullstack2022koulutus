@@ -25,7 +25,7 @@ const Navbar = () => {
             <Button color="inherit">Tentit</Button>
           </Link>
           {user.isAdmin && (
-            <Link to="admin/lisaatentti" color="inherit">
+            <Link to="admin/lisaatentti">
               <Button color="inherit">Uusi tentti</Button>
             </Link>
           )}

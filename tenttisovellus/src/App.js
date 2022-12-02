@@ -14,6 +14,7 @@ import ProtectedRoute from './ProtectedRoute';
 
 /* ADMIN KOMPONENTIT */
 import LisaaTentti from './admin/LisaaTentti';
+import PoistaTentti from './admin/PoistaTentti';
 
 const App = () => {
   const { setUser } = useContext(UserContext);
@@ -57,6 +58,14 @@ const App = () => {
           element={
             <ProtectedRoute isAdminRoute={true}>
               <LisaaTentti />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/poistatentti"
+          element={
+            <ProtectedRoute isAdminRoute={true}>
+              <PoistaTentti />
             </ProtectedRoute>
           }
         />
