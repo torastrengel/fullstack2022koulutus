@@ -9,7 +9,7 @@ const Vastaus = ({ vastaus, kysymys_id }) => {
   const { dispatch } = useContext(TenttiContext);
 
   return (
-    <div key={vastaus.id}>
+    <div>
       <input type="radio" value={vastaus.vastaus} name="kysymys" />{' '}
       <input
         className="vastaus-input"

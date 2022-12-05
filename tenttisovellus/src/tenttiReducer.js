@@ -27,6 +27,31 @@ const tenttiReducer = (tentit, action) => {
       };
     }
 
+    case 'ADMIN/LISÄÄ_VASTAUSVAIHTOEHTO': {
+      const { kys_id, vastaus_id } = action.payload;
+      const uudetVaihtoehdot = kopio.haettuTentti.kysymykset.map((item) => {
+        if (item.id === kys_id) {
+          return {
+            ...item,
+            vastausvaihtoehdot: [
+              ...item.vastausvaihtoehdot,
+              { id: vastaus_id, kysymys_id: kys_id, oikein: false, teksti: '' },
+            ],
+          };
+        } else {
+          return item;
+        }
+      });
+
+      console.log('Vanha', kopio.haettuTentti.kysymykset[0].vastausvaihtoehdot);
+      console.log('Uusi', uudetVaihtoehdot);
+
+      return {
+        ...kopio,
+        haettuTentti: { ...kopio.haettuTentti, kysymykset: uudetVaihtoehdot },
+      };
+    }
+
     case 'HAE_KAIKKI_TENTIT': {
       return { ...kopio, tenttilista: action.payload.tentit };
     }

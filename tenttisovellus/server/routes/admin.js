@@ -151,10 +151,11 @@ router.post('/vastaukset', async (req, res) => {
 
   try {
     const text =
-      'INSERT INTO vastaus (oikein, teksti, kysymys_id) VALUES ($1, $2, $3)';
-    await db.query(text, values);
+      'INSERT INTO vastaus (oikein, teksti, kysymys_id) VALUES ($1, $2, $3) returning id';
+    const { rows } = await db.query(text, values);
     res.status(200).send({
       success: true,
+      vastaus_id: rows[0].id,
       message: 'Tenttivastaus tallennettu onnistuneesti ✅',
     });
   } catch (error) {

@@ -31,6 +31,27 @@ const Kysymys = ({ kysymys, vastaukset }) => {
     }
   };
 
+  const lisääVastaus = async () => {
+    try {
+      const { data } = await axios.post(
+        `https://localhost:3001/admin/vastaukset/`,
+        { onkoOikein: false, vastaus: '', kysymys_id: kysymys.id },
+        tokenConfig()
+      );
+      if (data.success) {
+        dispatch({
+          type: 'ADMIN/LISÄÄ_VASTAUSVAIHTOEHTO',
+          payload: {
+            vastaus_id: data.vastaus_id,
+            kys_id: kysymys.id,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Virhe vastausvaihtoehdon lisäämisessä');
+    }
+  };
+
   return (
     <div className="kysymys">
       <h3>{kysymys.kysymys}</h3>
@@ -65,10 +86,13 @@ const Kysymys = ({ kysymys, vastaukset }) => {
           }
         }}
       />
-      <button
-        onClick={() => poistaKysymys(kysymys.id)}
-      >{`Delete question ${kysymys.id}`}</button>
       {vastausvaihtoehdot}
+      <div className="kysymysnapit-container">
+        <button onClick={lisääVastaus}>Lisää vastausvaihtoehto</button>
+        <button
+          onClick={() => poistaKysymys(kysymys.id)}
+        >{`Delete question ${kysymys.id}`}</button>
+      </div>
     </div>
   );
 };
