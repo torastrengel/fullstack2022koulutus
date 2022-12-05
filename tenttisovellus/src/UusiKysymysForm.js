@@ -28,7 +28,7 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
         {
           kysymys: kysymysRef.current.value,
           pisteet: pisteRef.current.value,
-          tentti_id: tentti.tentti.id,
+          tentti_id: tentti.valittuTentti.tentti.id,
         },
         tokenConfig()
       );
@@ -36,10 +36,6 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
     } catch (error) {
       console.error('Virhe lähettäessä kysymystä DB:hen', error);
     } finally {
-      // const result = await axios.get(
-      //   `https://localhost:3001/tentit/${tentit.tentti.id}`,
-      //   tokenConfig()
-      // );
       vaihtoehdot.forEach(async (item) => {
         try {
           await axios.post(

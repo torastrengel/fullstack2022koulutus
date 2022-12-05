@@ -37,16 +37,18 @@ router.post('/kysymykset', async (req, res) => {
 // Poista kysymys ID:n avulla
 router.delete('/kysymykset/:id', async (req, res) => {
   try {
-    const text = 'DELETE FROM kysymys WHERE id = ($1)';
-    const values = [req.params.id];
-    await db.query(text, values);
-    res
-      .status(200)
-      .send(`Kysymys ID:llä ${req.params.id} poistettiin onnistuneesti ✅`);
+    const liitosQuery =
+      'DELETE FROM tentti_kysymys_liitos WHERE kysymys_id = ($1)';
+    await db.query(liitosQuery, [req.params.id]);
+    res.status(200).send({
+      success: true,
+      message: `Kysymys ID:llä ${req.params.id} poistettiin onnistuneesti ✅`,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .send(`Kysymys ID:llä ${req.params.id} ei onnistuttu poistamaan ❌`);
+    res.status(500).send({
+      success: false,
+      message: `Kysymys ID:llä ${req.params.id} ei onnistuttu poistamaan ❌`,
+    });
   }
 });
 

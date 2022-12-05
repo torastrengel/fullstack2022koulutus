@@ -1,24 +1,39 @@
 /* Reducer keissit - TENTIT */
 const tenttiReducer = (tentit, action) => {
   const kopio = JSON.parse(JSON.stringify(tentit));
+  console.log('tenttiReducer', action.type);
   switch (action.type) {
     case 'ADMIN/TENTIT_HAETTU': {
-      console.log('tenttiReducer', action.type);
       return { ...kopio, tenttilista: action.payload };
     }
 
     case 'ADMIN/POISTA_TENTTI': {
-      console.log('tenttiReducer', action.type);
       const uudetTentit = kopio.tenttilista.filter(
         (item) => item.id !== action.payload
       );
       return { ...kopio, tenttilista: uudetTentit };
     }
 
+    case 'ADMIN/POISTA_KYSYMYS': {
+      const uusiKysymyslista = kopio.haettuTentti.kysymykset.filter(
+        (item) => item.id !== action.payload.kys_id
+      );
+      return {
+        ...kopio,
+        haettuTentti: {
+          ...kopio.valittuTentti,
+          kysymykset: uusiKysymyslista,
+        },
+      };
+    }
+
+    case 'HAE_KAIKKI_TENTIT': {
+      return { ...kopio, tenttilista: action.payload.tentit };
+    }
+
     case 'KYSYMYS_MUUTETTIIN': {
-      console.log('tentitReducer:', action.type);
       const { kysymys: uusiKysymys, kysymysId } = action.payload;
-      const uudetKysymykset = kopio.kysymykset.map((item) => {
+      const uudetKysymykset = kopio.valittuTentti.kysymykset.map((item) => {
         if (item.id === kysymysId) {
           return { ...item, kysymys: uusiKysymys };
         } else {
@@ -26,18 +41,19 @@ const tenttiReducer = (tentit, action) => {
         }
       });
 
-      return { ...kopio, kysymykset: uudetKysymykset };
+      return {
+        ...kopio,
+        valittuTentti: { ...kopio.valittuTentti, kysymykset: uudetKysymykset },
+      };
     }
 
     case 'TENTTI_HAETTU': {
-      console.log('tentitReducer:', action.type);
-      return { ...action.payload };
+      return { ...kopio, haettuTentti: { ...action.payload.valittuTentti } };
     }
 
     case 'OIKEELLISUUS_MUUTETTIIN': {
-      console.log('tentitReducer:', action.type);
       const { uusiOikea, vastausId } = action.payload;
-      const uudetVastaukset = kopio.kysymykset.map((kysymys) => {
+      const uudetVastaukset = kopio.haettuTentti.kysymykset.map((kysymys) => {
         return {
           ...kysymys,
           vastausvaihtoehdot: kysymys.vastausvaihtoehdot.map((vastaus) => {
@@ -50,64 +66,49 @@ const tenttiReducer = (tentit, action) => {
         };
       });
 
-      return { ...kopio, kysymykset: uudetVastaukset };
+      return {
+        ...kopio,
+        haettuTentti: { ...kopio.haettuTentti, kysymykset: uudetVastaukset },
+      };
     }
 
     case 'VASTAUS_MUUTETTIIN': {
-      console.log('tentitReducer:', action.type);
       const { uusiVastaus, vastausId, kysymysId } = action.payload;
 
-      const muokattuKysymyslista = kopio.kysymykset.map((kysymys) => {
-        if (kysymys.id === kysymysId) {
-          return {
-            ...kysymys,
-            vastausvaihtoehdot: kysymys.vastausvaihtoehdot.map((vastaus) => {
-              if (vastaus.id === vastausId) {
-                return { ...vastaus, teksti: uusiVastaus };
-              } else {
-                return vastaus;
-              }
-            }),
-          };
-        } else {
-          return kysymys;
+      const muokattuKysymyslista = kopio.haettuTentti.kysymykset.map(
+        (kysymys) => {
+          if (kysymys.id === kysymysId) {
+            return {
+              ...kysymys,
+              vastausvaihtoehdot: kysymys.vastausvaihtoehdot.map((vastaus) => {
+                if (vastaus.id === vastausId) {
+                  return { ...vastaus, teksti: uusiVastaus };
+                } else {
+                  return vastaus;
+                }
+              }),
+            };
+          } else {
+            return kysymys;
+          }
         }
-      });
+      );
 
-      return { ...kopio, kysymykset: muokattuKysymyslista };
+      return {
+        ...kopio,
+        haettuTentti: {
+          ...kopio.haettuTentti,
+          kysymykset: muokattuKysymyslista,
+        },
+      };
     }
 
     case 'VIRHE': {
-      console.log('tentitReducer:', action.type);
       return { ...kopio, ...action.payload };
     }
 
-    case 'KIRJAUDU_ULOS': {
-      console.log('tentitReducer:', action.type);
-      return {
-        ...kopio,
-        user: {
-          isAuthenticated: action.payload.isAuth,
-          token: action.payload.token,
-        },
-      };
-    }
-
-    case 'KIRJAUDU_SISÄÄN': {
-      console.log('tentitReducer:', action.type);
-      return {
-        ...kopio,
-        user: {
-          isAuthenticated: action.payload.isAuth,
-          token: action.payload.token,
-        },
-      };
-    }
-
     case 'KYSYMYS_LISÄTTIIN': {
-      console.log('tentitReducer:', action.type);
       const { kysymys_id, kysymys, vaihtoehdot } = action.payload;
-      console.log(vaihtoehdot);
       const vastaukset = vaihtoehdot.map((item) => {
         return {
           id: item.id,
@@ -118,32 +119,21 @@ const tenttiReducer = (tentit, action) => {
       });
       return {
         ...kopio,
-        kysymykset: [
-          ...kopio.kysymykset,
-          {
-            id: kysymys_id,
-            kysymys: kysymys,
-            vastausvaihtoehdot: [...vastaukset],
-          },
-        ],
+        valittuTentti: {
+          ...kopio.valittuTentti,
+          kysymykset: [
+            ...kopio.valittuTentti.kysymykset,
+            {
+              id: kysymys_id,
+              kysymys: kysymys,
+              vastausvaihtoehdot: [...vastaukset],
+            },
+          ],
+        },
       };
     }
 
-    case 'ALUSTA_DATA':
-      console.log('Data alustetaan...');
-      return action.payload;
-
-    case 'VAIHDA_TENTTI':
-      console.log('Tentti vaihdettu');
-      return { ...action.payload };
-
-    case 'PÄIVITÄ_TALLENNUS':
-      console.log('tentitReducer:', action.type);
-      kopio.dataSaved = action.payload.dataSaved;
-      return kopio;
-
     default:
-      console.log('tentitReducer: default');
       throw new Error(
         'Joko actionia ei ole määritetty tai suoritit jotain uskomatonta'
       );

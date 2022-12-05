@@ -17,7 +17,7 @@ import LisaaTentti from './admin/LisaaTentti';
 import PoistaTentti from './admin/PoistaTentti';
 
 const App = () => {
-  const { setUser } = useContext(UserContext);
+  const { setUser, setIsAuth } = useContext(UserContext);
   useEffect(() => {
     const isTokenValid = async () => {
       const { data } = await axios.post('https://localhost:3001/token', {
@@ -29,6 +29,7 @@ const App = () => {
         localStorage.removeItem('tenttisovellus_user_email');
         localStorage.removeItem('tenttisovellus_user_is_admin');
         setUser({});
+        setIsAuth(false);
         alert(
           'Kirjautuminen vanhentunut. Ole hyvä ja kirjaudu sisään uudelleen'
         );

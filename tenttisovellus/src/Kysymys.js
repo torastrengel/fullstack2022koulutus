@@ -1,68 +1,35 @@
-import { useContext, useRef } from 'react';
+import { useContext } from 'react';
 import { TenttiContext } from './context/TenttiContext';
 import axios from 'axios';
+import Vastaus from './Vastaus';
 
 const tokenConfig = require('./utils/tokenConfig');
 
 const Kysymys = ({ kysymys, vastaukset }) => {
   const { dispatch } = useContext(TenttiContext);
-  const oikeaVastaus = useRef();
+
   const vastausvaihtoehdot = vastaukset.map((item) => {
-    return (
-      <div key={item.id}>
-        <input type="radio" value={item.vastaus} name="kysymys" />{' '}
-        <input
-          className="vastaus-input"
-          type="text"
-          defaultValue={item.teksti}
-          onChange={async (event) => {
-            try {
-              await axios.put(
-                `https://localhost:3001/admin/vastaukset/${item.id}`,
-                {
-                  vastaus: event.target.value,
-                  onkoOikein: oikeaVastaus.current.checked,
-                },
-                tokenConfig()
-              );
-              dispatch({
-                type: 'VASTAUS_MUUTETTIIN',
-                payload: {
-                  uusiVastaus: event.target.value,
-                  vastausId: item.id,
-                  kysymysId: kysymys.id,
-                },
-              });
-            } catch (error) {
-              dispatch({
-                type: 'VIRHE',
-                payload: {
-                  message: 'Hups! Tapahtui virhe. Aika noloa.',
-                  errorMessage: error,
-                },
-              });
-            }
-          }}
-        />
-        <input
-          onChange={async (event) => {
-            dispatch({
-              type: 'OIKEELLISUUS_MUUTETTIIN',
-              payload: {
-                uusiOikea: event.target.checked,
-                vastausId: item.id,
-              },
-            });
-          }}
-          type="checkbox"
-          ref={oikeaVastaus}
-          name="onkoOikea"
-          defaultChecked={item.oikein}
-        />{' '}
-        Oikea vastaus?
-      </div>
-    );
+    return <Vastaus key={item.id} vastaus={item} kysymys_id={kysymys.id} />;
   });
+
+  const poistaKysymys = async (kys_id) => {
+    try {
+      const { data } = await axios.delete(
+        `https://localhost:3001/admin/kysymykset/${kys_id}`,
+        tokenConfig()
+      );
+      if (data.success) {
+        dispatch({
+          type: 'ADMIN/POISTA_KYSYMYS',
+          payload: {
+            kys_id: kysymys.id,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Virhe kysymyksen poistossa: ', error);
+    }
+  };
 
   return (
     <div className="kysymys">
@@ -98,6 +65,9 @@ const Kysymys = ({ kysymys, vastaukset }) => {
           }
         }}
       />
+      <button
+        onClick={() => poistaKysymys(kysymys.id)}
+      >{`Delete question ${kysymys.id}`}</button>
       {vastausvaihtoehdot}
     </div>
   );

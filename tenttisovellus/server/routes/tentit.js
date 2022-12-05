@@ -9,9 +9,16 @@ router.get('/', async (req, res) => {
     const text =
       'SELECT * FROM tentti WHERE voimassaolo = true ORDER BY id ASC';
     const { rows } = await db.query(text);
-    res.status(200).send(rows);
+    res.status(200).send({
+      success: true,
+      results: rows,
+    });
   } catch (error) {
-    console.error('Tenttidatan haussa ongelma:', error);
+    res.status(500).send({
+      success: false,
+      message: 'Tenttidatan haussa ongelma',
+      errorMessage: error,
+    });
   }
 });
 
@@ -50,8 +57,16 @@ router.get('/:tenttiId', verifyToken, async (req, res) => {
       kysymykset,
     };
 
-    res.send(tenttiObjekti);
+    res.status(200).send({
+      success: true,
+      ...tenttiObjekti,
+    });
   } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Virhe hakiessa tenttiä liitostaulun avulla',
+      errorMessage: error,
+    });
     console.error('Virhe hakiessa tenttiä liitostaulusta:', error);
   }
 });

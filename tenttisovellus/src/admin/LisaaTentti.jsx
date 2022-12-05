@@ -47,12 +47,7 @@ const LisaaTentti = () => {
   }
 
   return (
-    <div>
-      <h1>Uuden tentin nimi: {nimi}</h1>
-      <h2>Uuden tentin kuvaus: {kuvaus}</h2>
-      <h2>Mihin asti tentti on voimassa? {pvm}</h2>
-      <h2>Uuden tentin maksimipisteet? {maxpisteet}</h2>
-
+    <div className="lisaatentti-form-container">
       <form className="lisaatentti-form" onSubmit={lisaaTentti}>
         <label htmlFor="nimi">Tentin nimi</label>
         <input
