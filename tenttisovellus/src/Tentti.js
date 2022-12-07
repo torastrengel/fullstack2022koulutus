@@ -9,12 +9,15 @@ import Button from '@mui/material/Button';
 import UusiKysymysForm from './UusiKysymysForm';
 import { TenttiContext } from './context/TenttiContext';
 import { UserContext } from './context/UserContext';
+import axios from 'axios';
+import tokenConfig from './utils/tokenConfig';
 
 /* Komponentti yhden tentin näyttämistä varten */
 
 const Tentti = () => {
   const { id: tenttiId } = useParams();
   const [lomakeEsilla, setLomakeEsilla] = useState(false);
+  const [tenttiAloitettu, setTenttiAloitettu] = useState(false);
   const { dispatch, tentti } = useContext(TenttiContext);
   const { user } = useContext(UserContext);
 
@@ -67,6 +70,25 @@ const Tentti = () => {
     console.log(e);
   };
 
+  const aloitaTentti = async () => {
+    const uusiSuoritus = {
+      kayttaja_id: user.userId,
+    };
+
+    try {
+      const { data } = await axios.post(
+        `https://localhost:3001/tentit/${tenttiId}/suoritus`,
+        uusiSuoritus,
+        tokenConfig()
+      );
+      if (data.success) {
+        setTenttiAloitettu(true);
+      }
+    } catch (error) {
+      console.error('Virhe suorituksen merkinnässä: ', error);
+    }
+  };
+
   const kysymykset = tentti.haettuTentti.kysymykset?.map((item, index) => {
     return (
       <Kysymys
@@ -80,13 +102,21 @@ const Tentti = () => {
   });
 
   if (!user.isAdmin) {
-    return (
+    return tenttiAloitettu ? (
       <div className="tentti">
         <h1>{tentti.haettuTentti.tentti?.nimi}</h1>
         {kysymykset}
         <button onClick={palautaTentti} className="tentin-palautusnappi">
           Palauta tentti
         </button>
+      </div>
+    ) : (
+      <div>
+        <h2>
+          Olet aloittamassa tentin. Paina alla olevaa nappia aloittaaksesi
+          tentin
+        </h2>
+        <button onClick={aloitaTentti}>Aloita tentti</button>
       </div>
     );
   }

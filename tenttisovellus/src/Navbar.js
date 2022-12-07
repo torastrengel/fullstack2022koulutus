@@ -28,6 +28,9 @@ const Navbar = () => {
           <Link to="tentit" color="inherit">
             <Button color="inherit">Tentit</Button>
           </Link>
+          <Link to="kayttaja/tentit" color="inherit">
+            <Button color="inherit">Keskeneräiset tentit</Button>
+          </Link>
           {user.isAdmin && (
             <Link to="admin/lisaatentti">
               <Button color="inherit">Uusi tentti</Button>

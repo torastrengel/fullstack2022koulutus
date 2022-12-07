@@ -11,6 +11,7 @@ import Login from './Login';
 import TenttiLista from './TenttiLista';
 import Tentti from './Tentti';
 import ProtectedRoute from './ProtectedRoute';
+import { KeskeneraisetTentit } from './KeskeneraisetTentit';
 
 /* ADMIN KOMPONENTIT */
 import LisaaTentti from './admin/LisaaTentti';
@@ -54,6 +55,14 @@ const App = () => {
           }
         />
         <Route path="login" element={<Login />} />
+        <Route
+          path="kayttaja/tentit"
+          element={
+            <ProtectedRoute>
+              <KeskeneraisetTentit />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="admin/lisaatentti"
           element={

@@ -113,3 +113,15 @@ header {
 .tentin-palautusnappi:hover {
   transform: scale(1.25);
 }
+
+.tentti-card-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9dc5c;
+  width: 400px;
+  padding: 1rem;
+  text-align: center;
+  color: black;
+  border-radius: 0.66rem;
+  margin-top: 2rem;
+}

@@ -75,7 +75,12 @@ router.get('/:tenttiId', verifyToken, async (req, res) => {
 router.post('/:tenttiId/suoritus', async (req, res) => {
   try {
     const { tenttiId: tentti_id } = req.params;
-    const { kayttaja_id, suoritettu, hyvaksytty, vastaukset } = req.body;
+    const {
+      kayttaja_id,
+      suoritettu = false,
+      hyvaksytty = false,
+      vastaukset = {},
+    } = req.body;
     const values = [
       tentti_id,
       kayttaja_id,
@@ -87,11 +92,61 @@ router.post('/:tenttiId/suoritus', async (req, res) => {
       'INSERT INTO tentti_suoritus (tentti_id, kayttaja_id, suoritettu, hyvaksytty, vastaukset) VALUES ($1, $2, $3, $4, $5)';
 
     await db.query(text, values);
-    res.status(200).send('Tenttisuoritus lisätty onnistuneesti! ✅');
+    res.status(200).send({
+      success: true,
+      message: 'Tenttisuoritus lisätty onnistuneesti! ✅',
+    });
   } catch (error) {
     console.error('Virhe tenttisuorituksen tallennuksessa:', error);
-    res.status(500).send('Tenttisuorituksen tallennuksessa ilmeni virhe:');
+    res.status(500).send({
+      success: false,
+      message: 'Tenttisuorituksen tallennuksessa ilmeni virhe',
+      errorMessage: error,
+    });
   }
+});
+
+router.get('/kayttaja/:kayttajaId', verifyToken, async (req, res) => {
+  try {
+    const text =
+      'SELECT * from tentti WHERE id IN (SELECT tentti_id FROM tentti_suoritus WHERE kayttaja_id = ($1))';
+    const { rows } = await db.query(text, [req.params.kayttajaId]);
+    res.status(200).send({
+      success: true,
+      message: `Käyttäjän ${req.params.kayttajaId} keskeneräiset tentit haettu onnistuneesti ✅`,
+      tentit: rows,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: `Virhe käyttäjän ${req.params.kayttajaId} keskeneräisten tenttien haussa ❌`,
+      errorMessage: error,
+    });
+  }
+
+  // try {
+  //   await client.query('BEGIN');
+  //   const kysymysQuery =
+  //     'INSERT INTO kysymys (kysymys) VALUES ($1) RETURNING id';
+  //   const { rows } = await client.query(kysymysQuery, [kysymys]);
+  //   const kysymys_id = rows[0].id;
+  //   const insertQuestionToExam =
+  //     'INSERT INTO tentti_kysymys_liitos(tentti_id, kysymys_id, pisteet) VALUES ($1, $2, $3)';
+  //   const insertQuestionToExamValues = [tentti_id, kysymys_id, pisteet];
+  //   await client.query(insertQuestionToExam, insertQuestionToExamValues);
+  //   await client.query('COMMIT');
+  //   console.log(`Kysymys luotu ja yhdistetty tenttiin ID:llä ${tentti_id} ✅`);
+  //   res.status(200).send({
+  //     message: `Kysymys luotu ja yhdistetty tenttiin ID:llä ${tentti_id} ✅`,
+  //     kysymys_id,
+  //   });
+  // } catch (error) {
+  //   await client.query('ROLLBACK');
+  //   console.error('Virhe kysymyksen luomisessa:', error);
+  //   res.status(500).send('Virhe kysymyksen luonnissa');
+  // } finally {
+  //   client.release();
+  // }
 });
 
 // Muokkaa tenttiä ID:n avulla
