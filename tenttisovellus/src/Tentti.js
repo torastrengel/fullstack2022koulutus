@@ -63,6 +63,10 @@ const Tentti = () => {
     setLomakeEsilla(!lomakeEsilla);
   };
 
+  const palautaTentti = (e) => {
+    console.log(e);
+  };
+
   const kysymykset = tentti.haettuTentti.kysymykset?.map((item, index) => {
     return (
       <Kysymys
@@ -80,6 +84,9 @@ const Tentti = () => {
       <div className="tentti">
         <h1>{tentti.haettuTentti.tentti?.nimi}</h1>
         {kysymykset}
+        <button onClick={palautaTentti} className="tentin-palautusnappi">
+          Palauta tentti
+        </button>
       </div>
     );
   }

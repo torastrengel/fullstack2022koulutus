@@ -15,7 +15,10 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar position="static" style={{ backgroundColor: '#F9DC5C' }}>
+      <AppBar
+        position="static"
+        style={{ backgroundColor: user.isAdmin ? '#F34213' : '#F9DC5C' }}
+      >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link className="nav-header" to="/">

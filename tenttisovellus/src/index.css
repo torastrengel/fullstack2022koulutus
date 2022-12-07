@@ -79,3 +79,19 @@ header {
 .vastaus-input-container label {
   font-weight: bold;
 }
+
+.tentin-palautusnappi {
+  border: none;
+  width: max-content;
+  margin: 1rem auto 0 auto;
+  cursor: pointer;
+  border-radius: 0.6rem;
+  background-color: #f9dc5c;
+  font-weight: bold;
+  font-size: 18px;
+  transition: ease-in-out 300ms;
+}
+
+.tentin-palautusnappi:hover {
+  transform: scale(1.25);
+}
