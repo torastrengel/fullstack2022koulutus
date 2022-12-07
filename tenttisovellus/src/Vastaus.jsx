@@ -1,5 +1,6 @@
 import { useContext, useRef } from 'react';
 import { TenttiContext } from './context/TenttiContext';
+import { UserContext } from './context/UserContext';
 import axios from 'axios';
 import tokenConfig from './utils/tokenConfig';
 
@@ -7,6 +8,7 @@ const Vastaus = ({ vastaus, kysymys_id }) => {
   const oikeaVastaus = useRef();
   const vastausvaihtoehto = useRef();
   const { dispatch } = useContext(TenttiContext);
+  const { user } = useContext(UserContext);
 
   const poistaVaihtoehto = async (vastausid) => {
     try {
@@ -27,6 +29,20 @@ const Vastaus = ({ vastaus, kysymys_id }) => {
       console.error('Virhe vastausvaihtoehtoa poistaessa: ', error);
     }
   };
+
+  if (!user.isAdmin) {
+    return (
+      <div className="vastaus-input-container">
+        <input
+          type="radio"
+          value={vastaus.teksti}
+          name="kysymys"
+          id={vastaus.id}
+        />
+        <label htmlFor={vastaus.id}>{vastaus.teksti}</label>
+      </div>
+    );
+  }
 
   return (
     <div>

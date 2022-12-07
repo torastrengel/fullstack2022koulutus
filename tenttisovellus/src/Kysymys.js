@@ -1,12 +1,14 @@
 import { useContext } from 'react';
 import { TenttiContext } from './context/TenttiContext';
+import { UserContext } from './context/UserContext';
 import axios from 'axios';
 import Vastaus from './Vastaus';
 
 const tokenConfig = require('./utils/tokenConfig');
 
-const Kysymys = ({ kysymys, vastaukset }) => {
+const Kysymys = ({ kysymys, vastaukset, index }) => {
   const { dispatch } = useContext(TenttiContext);
+  const { user } = useContext(UserContext);
 
   const vastausvaihtoehdot = vastaukset.map((item) => {
     return <Vastaus key={item.id} vastaus={item} kysymys_id={kysymys.id} />;
@@ -52,9 +54,18 @@ const Kysymys = ({ kysymys, vastaukset }) => {
     }
   };
 
+  if (!user.isAdmin) {
+    return (
+      <div className="kysymys">
+        <h3>{`Kysymys #${index + 1}: ${kysymys.kysymys}`}</h3>
+        {vastausvaihtoehdot}
+      </div>
+    );
+  }
+
   return (
     <div className="kysymys">
-      <h3>{kysymys.kysymys}</h3>
+      <h3>{`Kysymys #${index + 1}: ${kysymys.kysymys}`}</h3>
       <input
         className="kysymys-input"
         type="text"

@@ -8,6 +8,7 @@ import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
 import UusiKysymysForm from './UusiKysymysForm';
 import { TenttiContext } from './context/TenttiContext';
+import { UserContext } from './context/UserContext';
 
 /* Komponentti yhden tentin näyttämistä varten */
 
@@ -15,6 +16,7 @@ const Tentti = () => {
   const { id: tenttiId } = useParams();
   const [lomakeEsilla, setLomakeEsilla] = useState(false);
   const { dispatch, tentti } = useContext(TenttiContext);
+  const { user } = useContext(UserContext);
 
   console.count('Tentti.js on ladannut: ');
 
@@ -61,16 +63,26 @@ const Tentti = () => {
     setLomakeEsilla(!lomakeEsilla);
   };
 
-  const kysymykset = tentti.haettuTentti.kysymykset?.map((item) => {
+  const kysymykset = tentti.haettuTentti.kysymykset?.map((item, index) => {
     return (
       <Kysymys
         key={item.id}
+        index={index}
         id={item.id}
         kysymys={item}
         vastaukset={item.vastausvaihtoehdot}
       />
     );
   });
+
+  if (!user.isAdmin) {
+    return (
+      <div className="tentti">
+        <h1>{tentti.haettuTentti.tentti?.nimi}</h1>
+        {kysymykset}
+      </div>
+    );
+  }
 
   return (
     <div className="tentti">

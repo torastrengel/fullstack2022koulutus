@@ -15,7 +15,7 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar position="static" color="primary">
+      <AppBar position="static" style={{ backgroundColor: '#F9DC5C' }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link className="nav-header" to="/">

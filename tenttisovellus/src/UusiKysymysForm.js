@@ -28,7 +28,7 @@ const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
         {
           kysymys: kysymysRef.current.value,
           pisteet: pisteRef.current.value,
-          tentti_id: tentti.valittuTentti.tentti.id,
+          tentti_id: tentti.haettuTentti.tentti.id,
         },
         tokenConfig()
       );
