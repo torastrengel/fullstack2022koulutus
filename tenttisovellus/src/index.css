@@ -29,6 +29,24 @@ header {
   width: 100vw;
 }
 
+.home-container {
+  display: flex;
+  padding: 1rem;
+  justify-content: space-between;
+}
+
+.home-introduction {
+  text-align: right;
+}
+
+.home-introduction p {
+  font-size: 18px;
+}
+
+.home-container img {
+  width: 450px;
+}
+
 .boldText {
   font-weight: bold;
 }
