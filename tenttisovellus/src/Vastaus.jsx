@@ -8,6 +8,26 @@ const Vastaus = ({ vastaus, kysymys_id }) => {
   const vastausvaihtoehto = useRef();
   const { dispatch } = useContext(TenttiContext);
 
+  const poistaVaihtoehto = async (vastausid) => {
+    try {
+      const { data } = await axios.delete(
+        `https://localhost:3001/admin/vastaukset/${vastausid}`,
+        tokenConfig()
+      );
+      if (data.success) {
+        dispatch({
+          type: 'ADMIN/POISTA_VAIHTOEHTO',
+          payload: {
+            vastausId: vastausid,
+            kys_id: kysymys_id,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Virhe vastausvaihtoehtoa poistaessa: ', error);
+    }
+  };
+
   return (
     <div>
       <input type="radio" value={vastaus.vastaus} name="kysymys" />{' '}
@@ -80,6 +100,12 @@ const Vastaus = ({ vastaus, kysymys_id }) => {
         }}
       />{' '}
       Oikea vastaus?
+      <span
+        onClick={() => poistaVaihtoehto(vastaus.id)}
+        className="vastausvaihtoehto-poisto"
+      >
+        🗑️
+      </span>
     </div>
   );
 };

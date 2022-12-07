@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 
 const TenttiLista = () => {
   const { dispatch, tentti } = useContext(TenttiContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const haeTentit = async () => {
@@ -19,13 +20,19 @@ const TenttiLista = () => {
             tentit: data.results,
           },
         });
+        setIsLoading(false);
       } else {
+        setIsLoading(false);
         return <h1>Tenttien haussa virhe!</h1>;
       }
     };
     haeTentit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isLoading) {
+    <h2>Haetaan tenttejä tietokannasta...</h2>;
+  }
 
   return (
     <div>

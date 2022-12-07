@@ -11,15 +11,10 @@ const LoginForm = () => {
   const [pwd, setPwd] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
 
-  console.count('LoginForm.jsx rendered: ');
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      if (!email || !pwd) {
-        throw new Error('Sähköposti tai salasana puuttuu!');
-      }
       const { data } = await axios.post('https://localhost:3001/login', {
         email: email,
         password: pwd,
@@ -44,7 +39,10 @@ const LoginForm = () => {
         }, 3000);
       }
     } catch (error) {
-      console.error(error);
+      setStatusMessage(error.message);
+      setTimeout(() => {
+        setStatusMessage('');
+      }, 3000);
     }
   };
 

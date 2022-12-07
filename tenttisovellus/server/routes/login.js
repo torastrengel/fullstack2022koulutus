@@ -15,15 +15,16 @@ router.post('/', async (req, res, next) => {
     existingUser = rows[0];
     passwordMatch = await bcrypt.compare(password, existingUser.salasana);
   } catch {
-    res.status(400).send('Käyttäjätunnus tai salasana väärin!');
-    const error = 'Tapahtui virhe!';
-    return next(error);
+    return res.status(400).send('Käyttäjätunnus tai salasana väärin!');
   }
   if (!existingUser || !passwordMatch) {
     const error = Error(
       'Väärät kirjautumistiedot! Tarkista sähköposti sekä salasana ja yritä uudestaan.'
     );
-    return next(error);
+    return res.status(401).send({
+      success: false,
+      errorMessage: error,
+    });
   }
   let token;
   try {
@@ -42,7 +43,7 @@ router.post('/', async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: 'Kirjautuminen onnistui! 🏄‍♂️',
     user: {

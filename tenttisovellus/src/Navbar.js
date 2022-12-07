@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 const Navbar = () => {
   const { user } = useContext(UserContext);
   const isLoggedIn = user.token;
+
   return (
     <>
       <AppBar position="static" color="primary">

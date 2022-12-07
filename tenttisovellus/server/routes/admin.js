@@ -173,14 +173,17 @@ router.delete('/vastaukset/:id', async (req, res) => {
   try {
     const text = 'DELETE FROM vastaus WHERE id = ($1)';
     await db.query(text, [req.params.id]);
-    res
-      .status(200)
-      .send(`Vastaus ID:llä ${req.params.id} poistettiin onnistuneesti ✅`);
+    res.status(200).send({
+      success: true,
+      message: `Vastaus ID:llä ${req.params.id} poistettiin onnistuneesti ✅`,
+    });
   } catch (error) {
     console.error('Virhe:', error);
-    res
-      .status(500)
-      .send(`Vastausta ID:llä ${req.params.id} ei onnistuttu poistamaan ❌`);
+    res.status(500).send({
+      success: false,
+      message: `Vastausta ID:llä ${req.params.id} ei onnistuttu poistamaan ❌`,
+      errorMessage: error,
+    });
   }
 });
 

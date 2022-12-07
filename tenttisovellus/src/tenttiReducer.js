@@ -14,6 +14,28 @@ const tenttiReducer = (tentit, action) => {
       return { ...kopio, tenttilista: uudetTentit };
     }
 
+    case 'ADMIN/POISTA_VAIHTOEHTO': {
+      const { vastausId, kys_id } = action.payload;
+
+      const uusiKysymyslista = tentit.haettuTentti.kysymykset.map((kysymys) => {
+        if (kysymys.id === kys_id) {
+          return {
+            ...kysymys,
+            vastausvaihtoehdot: kysymys.vastausvaihtoehdot.filter(
+              (vastaus) => vastaus.id !== vastausId
+            ),
+          };
+        } else {
+          return kysymys;
+        }
+      });
+
+      return {
+        ...tentit,
+        haettuTentti: { ...tentit.haettuTentti, kysymykset: uusiKysymyslista },
+      };
+    }
+
     case 'ADMIN/POISTA_KYSYMYS': {
       const uusiKysymyslista = kopio.haettuTentti.kysymykset.filter(
         (item) => item.id !== action.payload.kys_id
@@ -42,9 +64,6 @@ const tenttiReducer = (tentit, action) => {
           return item;
         }
       });
-
-      console.log('Vanha', kopio.haettuTentti.kysymykset[0].vastausvaihtoehdot);
-      console.log('Uusi', uudetVaihtoehdot);
 
       return {
         ...kopio,

@@ -61,8 +61,6 @@ const Tentti = () => {
     setLomakeEsilla(!lomakeEsilla);
   };
 
-  console.log(tentti);
-
   const kysymykset = tentti.haettuTentti.kysymykset?.map((item) => {
     return (
       <Kysymys
