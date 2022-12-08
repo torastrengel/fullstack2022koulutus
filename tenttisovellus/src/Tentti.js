@@ -7,7 +7,7 @@ import haeTentti from './utils/haeTentti';
 
 import Kysymys from './Kysymys';
 import Button from '@mui/material/Button';
-import UusiKysymysForm from './UusiKysymysForm';
+import UusiKysymysForm from './admin/UusiKysymysForm';
 import { TenttiContext } from './context/TenttiContext';
 import axios from 'axios';
 import tokenConfig from './utils/tokenConfig';

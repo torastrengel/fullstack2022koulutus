@@ -1,9 +1,9 @@
 import { Button } from '@mui/material';
 import { useRef, useState, useContext } from 'react';
-import VaihtoehtoKentta from './VaihtoehtoKentta';
+import VaihtoehtoKentta from '../VaihtoehtoKentta';
 import axios from 'axios';
-import { TenttiContext } from './context/TenttiContext';
-import tokenConfig from './utils/tokenConfig';
+import { TenttiContext } from '../context/TenttiContext';
+import tokenConfig from '../utils/tokenConfig';
 
 const UusiKysymysForm = ({ muutaLomakkeenTila }) => {
   const kysymysRef = useRef();
