@@ -4,6 +4,8 @@ import { UserContext } from './context/UserContext';
 import { TenttiContextProvider } from './context/TenttiContext';
 import axios from 'axios';
 
+import ErrorPage from './ErrorPage';
+
 /* USERIN KOMPONENTIT */
 import Navbar from './Navbar';
 import Home from './Home';
@@ -86,6 +88,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </TenttiContextProvider>
   );

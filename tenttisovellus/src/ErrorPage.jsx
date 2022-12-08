@@ -1,19 +1,24 @@
-import { useRouteError } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const ErrorPage = () => {
-  const error = useRouteError();
-  console.error(error);
-
   return (
     <div id="error-page">
-      <h1>Hups! 🤦‍♂️</h1>
+      <h1>404 - Hakemaasi sivua ei löydy</h1>
+      <h2>Hups! 🤦‍♂️</h2>
       <p>
         Jotain meni nyt pieleen! Hätä ei ole tämän näköinen, sillä olemme
         lähettäneet koulutetut apinat korjaamaan ongelmaa
       </p>
-      <p>
-        <i className="boldText">{error.statusText || error.message}</i>
-      </p>
+      <Link
+        style={{
+          color: 'white',
+          fontWeight: 'bold',
+          textDecoration: 'underline',
+        }}
+        to="/"
+      >
+        Palaa takaisin etusivulle
+      </Link>
     </div>
   );
 };
