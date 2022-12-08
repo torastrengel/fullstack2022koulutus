@@ -6,7 +6,7 @@ import jwt_decode from 'jwt-decode';
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { setUser, setIsAuth } = useContext(UserContext);
   const [email, setEmail] = useState('');
   const [pwd, setPwd] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
@@ -21,19 +21,13 @@ const LoginForm = () => {
       });
 
       if (data.user.token) {
-        const { userId, email, isAdmin } = jwt_decode(data.user.token, 'apina');
         localStorage.setItem('tenttisovellus_token', data.user.token);
-        localStorage.setItem('tenttisovellus_user_id', userId);
-        localStorage.setItem('tenttisovellus_user_email', email);
-        localStorage.setItem('tenttisovellus_user_is_admin', isAdmin);
         setUser({
-          userId,
-          email,
-          isAdmin,
           token: data.user.token,
         });
         setStatusMessage(data.message);
         setTimeout(() => {
+          setIsAuth(true);
           setStatusMessage('');
           navigate('/');
         }, 3000);

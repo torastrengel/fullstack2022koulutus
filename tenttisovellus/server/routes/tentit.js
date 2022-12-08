@@ -24,6 +24,7 @@ router.get('/', async (req, res) => {
 
 // Hae yksi tentti ID:n avulla, joka sisältää kysymykset ja vastausvaihtoehdot
 router.get('/:tenttiId', verifyToken, async (req, res) => {
+  console.log(req.decoded);
   try {
     const tentti_query = 'SELECT * FROM tentti WHERE id = ($1)';
     const { rows: tentti_data } = await db.query(tentti_query, [
@@ -59,6 +60,7 @@ router.get('/:tenttiId', verifyToken, async (req, res) => {
 
     res.status(200).send({
       success: true,
+      isAdmin: req.decoded.isAdmin,
       ...tenttiObjekti,
     });
   } catch (error) {
@@ -109,7 +111,7 @@ router.post('/:tenttiId/suoritus', async (req, res) => {
 router.get('/kayttaja/:kayttajaId', verifyToken, async (req, res) => {
   try {
     const text =
-      'SELECT * from tentti WHERE id IN (SELECT tentti_id FROM tentti_suoritus WHERE kayttaja_id = ($1))';
+      'SELECT * from tentti WHERE id IN (SELECT tentti_id FROM tentti_suoritus WHERE kayttaja_id = ($1) AND suoritettu = false)';
     const { rows } = await db.query(text, [req.params.kayttajaId]);
     res.status(200).send({
       success: true,
@@ -123,30 +125,6 @@ router.get('/kayttaja/:kayttajaId', verifyToken, async (req, res) => {
       errorMessage: error,
     });
   }
-
-  // try {
-  //   await client.query('BEGIN');
-  //   const kysymysQuery =
-  //     'INSERT INTO kysymys (kysymys) VALUES ($1) RETURNING id';
-  //   const { rows } = await client.query(kysymysQuery, [kysymys]);
-  //   const kysymys_id = rows[0].id;
-  //   const insertQuestionToExam =
-  //     'INSERT INTO tentti_kysymys_liitos(tentti_id, kysymys_id, pisteet) VALUES ($1, $2, $3)';
-  //   const insertQuestionToExamValues = [tentti_id, kysymys_id, pisteet];
-  //   await client.query(insertQuestionToExam, insertQuestionToExamValues);
-  //   await client.query('COMMIT');
-  //   console.log(`Kysymys luotu ja yhdistetty tenttiin ID:llä ${tentti_id} ✅`);
-  //   res.status(200).send({
-  //     message: `Kysymys luotu ja yhdistetty tenttiin ID:llä ${tentti_id} ✅`,
-  //     kysymys_id,
-  //   });
-  // } catch (error) {
-  //   await client.query('ROLLBACK');
-  //   console.error('Virhe kysymyksen luomisessa:', error);
-  //   res.status(500).send('Virhe kysymyksen luonnissa');
-  // } finally {
-  //   client.release();
-  // }
 });
 
 // Muokkaa tenttiä ID:n avulla

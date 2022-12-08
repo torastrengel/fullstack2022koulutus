@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { TenttiContext } from './context/TenttiContext';
-import { UserContext } from './context/UserContext';
+import { useDecodeToken } from './hooks/useDecodeToken';
 import axios from 'axios';
 import Vastaus from './Vastaus';
 
@@ -8,7 +8,7 @@ const tokenConfig = require('./utils/tokenConfig');
 
 const Kysymys = ({ kysymys, vastaukset, index }) => {
   const { dispatch } = useContext(TenttiContext);
-  const { user } = useContext(UserContext);
+  const { isAdmin } = useDecodeToken();
 
   const vastausvaihtoehdot = vastaukset.map((item) => {
     return <Vastaus key={item.id} vastaus={item} kysymys_id={kysymys.id} />;
@@ -54,7 +54,7 @@ const Kysymys = ({ kysymys, vastaukset, index }) => {
     }
   };
 
-  if (!user.isAdmin) {
+  if (!isAdmin) {
     return (
       <div className="kysymys">
         <h3>{`Kysymys #${index + 1}: ${kysymys.kysymys}`}</h3>

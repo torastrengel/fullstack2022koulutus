@@ -18,7 +18,7 @@ const SignOut = () => {
   };
 
   return (
-    <Button onClick={handleSignOut} color="inherit">
+    <Button style={{ color: 'black' }} onClick={handleSignOut}>
       Sign out
     </Button>
   );

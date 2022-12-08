@@ -5,7 +5,7 @@ axios.defaults.baseURL = 'https://localhost:3001';
 
 export const useAxios = (axiosParams) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   const haeData = async (params) => {
@@ -15,7 +15,7 @@ export const useAxios = (axiosParams) => {
     } catch (error) {
       setError(error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -24,5 +24,5 @@ export const useAxios = (axiosParams) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { data, loading, error };
+  return { data, isLoading, error };
 };

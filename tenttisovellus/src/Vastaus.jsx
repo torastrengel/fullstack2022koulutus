@@ -1,6 +1,6 @@
 import { useContext, useRef } from 'react';
 import { TenttiContext } from './context/TenttiContext';
-import { UserContext } from './context/UserContext';
+import { useDecodeToken } from './hooks/useDecodeToken';
 import axios from 'axios';
 import tokenConfig from './utils/tokenConfig';
 
@@ -8,7 +8,7 @@ const Vastaus = ({ vastaus, kysymys_id }) => {
   const oikeaVastaus = useRef();
   const vastausvaihtoehto = useRef();
   const { dispatch } = useContext(TenttiContext);
-  const { user } = useContext(UserContext);
+  const { isAdmin } = useDecodeToken();
 
   const poistaVaihtoehto = async (vastausid) => {
     try {
@@ -30,7 +30,7 @@ const Vastaus = ({ vastaus, kysymys_id }) => {
     }
   };
 
-  if (!user.isAdmin) {
+  if (!isAdmin) {
     return (
       <div className="vastaus-input-container">
         <input

@@ -1,33 +1,40 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDecodeToken } from './hooks/useDecodeToken';
 import axios from 'axios';
 
-import { TenttiContext } from './context/TenttiContext';
-import { UserContext } from './context/UserContext';
 import tokenConfig from './utils/tokenConfig';
 
 export const KeskeneraisetTentit = () => {
-  const { tentti } = useContext(TenttiContext);
-  const { user } = useContext(UserContext);
+  const { userId } = useDecodeToken();
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    console.log(user.userId);
     const haeData = async () => {
-      const { data } = await axios.get(
-        `https://localhost:3001/tentit/kayttaja/${user.userId}`,
-        tokenConfig()
-      );
-      if (data.success) {
-        setData(data.tentit);
+      try {
+        const { data } = await axios.get(
+          `https://localhost:3001/tentit/kayttaja/${userId}`,
+          tokenConfig()
+        );
+        if (data.success) {
+          setData(data.tentit);
+        }
+      } catch (error) {
+        setErrorMessage(error.message);
+      } finally {
         setIsLoading(false);
       }
     };
     haeData();
-  }, [user.userId]);
+  }, [userId]);
 
   if (isLoading) {
     return <h2>Ladataan keskeneräisiä tenttejä...</h2>;
+  }
+
+  if (errorMessage) {
+    return <h2>{errorMessage}</h2>;
   }
 
   if (data.length === 0) {
@@ -38,7 +45,7 @@ export const KeskeneraisetTentit = () => {
 
   return (
     <div>
-      <h1>{`Käyttäjän ${user.userId} keskeneräiset tentit:`}</h1>
+      <h1>{`Käyttäjän ${userId} keskeneräiset tentit:`}</h1>
       {data.map((item) => {
         return (
           <div className="tentti-card-container">

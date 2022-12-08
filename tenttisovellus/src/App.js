@@ -29,7 +29,7 @@ const App = () => {
         localStorage.removeItem('tenttisovellus_user_id');
         localStorage.removeItem('tenttisovellus_user_email');
         localStorage.removeItem('tenttisovellus_user_is_admin');
-        setUser({});
+        setUser({ token: null });
         setIsAuth(false);
         alert(
           'Kirjautuminen vanhentunut. Ole hyvä ja kirjaudu sisään uudelleen'
