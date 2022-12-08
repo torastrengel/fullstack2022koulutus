@@ -10,12 +10,11 @@ const ProtectedRoute = ({
 }) => {
   const { user } = useContext(UserContext);
   const { isAdmin } = useDecodeToken();
-  const token = user.token;
-  if (!token) {
+  if (!user.token) {
     return <Navigate to={redirectPath} />;
   }
 
-  if (isAdminRoute && token) {
+  if (isAdminRoute && user.token) {
     if (isAdmin) {
       console.log('Admin oikeudet, teretulemast!');
       return children;

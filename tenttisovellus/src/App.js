@@ -45,7 +45,14 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route index element={<Home />} />
-        <Route path="tentit" element={<TenttiLista />} />
+        <Route
+          path="tentit"
+          element={
+            <ProtectedRoute>
+              <TenttiLista />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="tentit/:id"
           element={
