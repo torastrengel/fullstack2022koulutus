@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 router.post('/', async (req, res, next) => {
   let { email, password } = req.body;
@@ -34,7 +35,7 @@ router.post('/', async (req, res, next) => {
         email: existingUser.email,
         isAdmin: existingUser.admin,
       },
-      'apina',
+      process.env.REACT_APP_TOKEN_KEY,
       { expiresIn: '1h' }
     );
   } catch (err) {

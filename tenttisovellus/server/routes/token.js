@@ -5,7 +5,7 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   const { token } = req.body;
   try {
-    jwt.verify(token, 'apina');
+    jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
     res.send({
       success: true,
       message: 'Token voimassa',

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -9,7 +10,7 @@ const verifyToken = (req, res, next) => {
       .json({ success: false, message: 'Error! Token not provided.' });
   }
 
-  const decodedToken = jwt.verify(token, 'apina');
+  const decodedToken = jwt.verify(token, process.env.REACT_APP_TOKEN_KEY);
 
   if (Date.now() >= decodedToken.exp * 1000) {
     res.status(401).send({
