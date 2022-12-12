@@ -7,9 +7,6 @@ const SignOut = () => {
   const handleSignOut = () => {
     try {
       localStorage.removeItem('tenttisovellus_token');
-      localStorage.removeItem('tenttisovellus_user_id');
-      localStorage.removeItem('tenttisovellus_user_email');
-      localStorage.removeItem('tenttisovellus_user_is_admin');
       setUser({ token: null });
       setIsAuth(false);
     } catch (error) {
