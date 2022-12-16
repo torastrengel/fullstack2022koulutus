@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import tokenConfig from './utils/tokenConfig';
 
-export const KeskeneraisetTentit = () => {
+const KeskeneraisetTentit = () => {
   const { userId } = useDecodeToken();
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
@@ -57,3 +57,5 @@ export const KeskeneraisetTentit = () => {
     </div>
   );
 };
+
+export default KeskeneraisetTentit;

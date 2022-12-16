@@ -13,7 +13,7 @@ import Login from './Login';
 import TenttiLista from './TenttiLista';
 import Tentti from './Tentti';
 import ProtectedRoute from './ProtectedRoute';
-import { KeskeneraisetTentit } from './KeskeneraisetTentit';
+import KeskeneraisetTentit from './KeskeneraisetTentit';
 
 /* ADMIN KOMPONENTIT */
 import LisaaTentti from './admin/LisaaTentti';
