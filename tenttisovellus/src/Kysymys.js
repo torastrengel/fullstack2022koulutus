@@ -11,7 +11,14 @@ const Kysymys = ({ kysymys, vastaukset, index }) => {
   const { isAdmin } = useDecodeToken();
 
   const vastausvaihtoehdot = vastaukset.map((item) => {
-    return <Vastaus key={item.id} vastaus={item} kysymys_id={kysymys.id} />;
+    return (
+      <Vastaus
+        key={item.id}
+        vastaus={item}
+        kysymys_id={kysymys.id}
+        kys_index={index}
+      />
+    );
   });
 
   const poistaKysymys = async (kys_id) => {

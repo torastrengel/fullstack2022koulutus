@@ -4,7 +4,7 @@ import { useDecodeToken } from './hooks/useDecodeToken';
 import axios from 'axios';
 import tokenConfig from './utils/tokenConfig';
 
-const Vastaus = ({ vastaus, kysymys_id }) => {
+const Vastaus = ({ vastaus, kysymys_id, kys_index }) => {
   const oikeaVastaus = useRef();
   const vastausvaihtoehto = useRef();
   const { dispatch } = useContext(TenttiContext);
@@ -46,7 +46,12 @@ const Vastaus = ({ vastaus, kysymys_id }) => {
 
   return (
     <div>
-      <input type="radio" value={vastaus.vastaus} name="kysymys" />{' '}
+      <input
+        type="radio"
+        value={vastaus.teksti}
+        name={`kysymys ${kys_index + 1}`}
+        id={vastaus.id}
+      />{' '}
       <input
         className="vastaus-input"
         type="text"
