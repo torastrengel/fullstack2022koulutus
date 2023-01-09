@@ -10,8 +10,8 @@ const Home = () => {
         <h1>Tervetuloa tenttisovellukseen! 🍜</h1>
         <p>
           Tenttisovelluksen avulla sinusta tulee entistäkin fiksumpi ihminen.
-          Sovelluksen käytön jälkeen jäät miettimään sitä faktaa, miten oletkaan
-          pärjännyt ilman tätä aiemmin.
+          Sovelluksen käytön jälkeen jäät miettimään, miten oletkaan aiemmin
+          pärjännyt ilman.
         </p>
       </div>
     </div>
